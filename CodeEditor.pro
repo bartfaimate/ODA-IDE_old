@@ -23,12 +23,26 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
+# Code editor
+# felület ahol lehet editálni
+# fájl böngésző oldalt
+# save / load / load last
+# compile / build
+# file extension felismerés. java, python, C, C++, arduino
+# run
+# syntax highlight
+
+
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    editor.cpp \
+    filemanager.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    editor.h \
+    filemanager.h
 
-FORMS += \
-        mainwindow.ui
+#FORMS += \
+ #       mainwindow.ui
