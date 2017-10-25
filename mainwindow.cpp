@@ -36,8 +36,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setLayout(hBoxLayout);
     //this->show();
-    createMenus();
+
     createActions();
+    createMenus();
+
 }
 
 MainWindow::~MainWindow()
@@ -56,13 +58,58 @@ void MainWindow::createMenus()
     fileMenu->addAction(saveFileAsAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
+
+    editMenu = menuBar->addMenu(tr("&Edit"));
+
+
+    compilerMenu = menuBar->addMenu(tr("Com&piler"));
+
+    helpMenu = menuBar->addMenu(tr("&Help"));
+
 }
 
+/**
+ * @brief MainWindow::createActions
+ * This function creates menu elements and actions for them.
+ */
 void MainWindow::createActions()
 {
     newWindowAct = new QAction(tr("&New Window"), this);
     newWindowAct->setShortcuts(QKeySequence::New);
     newWindowAct->setStatusTip(tr("Create a new window"));
-    //connect(newWindowAct, &QAction::triggered, this, &MainWindow::MainWindow());
+    connect(newWindowAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
 
+    newTabAct = new QAction(tr("New &Tab"), this);
+    newTabAct->setShortcuts(QKeySequence::AddTab);
+    newTabAct->setStatusTip(tr("Create new tab"));
+    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    newFileAct = new QAction(tr("New F&ile"), this);
+    newFileAct->setStatusTip(tr("Create new File"));
+    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    openFileAct = new QAction(tr("&Open File"), this);
+    openFileAct->setStatusTip(tr("Open existing File"));
+    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    saveFileAct = new QAction(tr("&Save"), this);
+    saveFileAct->setShortcut(QKeySequence::Save);
+    saveFileAct->setStatusTip(tr("Save a file"));
+    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    saveFileAsAct = new QAction(tr("Save as"), this);
+    saveFileAsAct->setShortcut(QKeySequence::SaveAs);
+    saveFileAsAct->setStatusTip(tr("Save as file"));
+    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    exitAct = new QAction(tr("Exit"), this);
+    exitAct->setShortcut(QKeySequence::Close);
+    exitAct->setStatusTip(tr("Close current window"));
+    connect(exitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
+}
+
+void MainWindow::newWindow()
+{
+    newWindows = new MainWindow(this);
+    newWindows->show();
 }

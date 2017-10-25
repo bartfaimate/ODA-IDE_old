@@ -54,9 +54,15 @@ private:
     QAction *aboutAct;
     QAction *aboutQtAct;
 
+    MainWindow *newWindows;
 
     void createMenus();
     void createActions();
+
+public slots:
+    void newWindow();
+
 };
+
 
 #endif // MAINWINDOW_H
