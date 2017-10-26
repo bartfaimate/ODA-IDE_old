@@ -1,38 +1,40 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+/**
+ * @brief MainWindow::MainWindow
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     window(new Ui::MainWindow)
 {
 
-    QWidget *widget = new QWidget;
-    setCentralWidget(widget);
+    /* widget is mainwidget*/
+    QWidget *mainWidget = new QWidget;
+    setCentralWidget(mainWidget);
     QWidget *topFiller = new QWidget;
     topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QWidget *bottomFiller = new QWidget;
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-     hBoxLayout = new QHBoxLayout();
+    hBoxLayout = new QHBoxLayout(); /* horizontal layout */
 
     //ui->setupUi(this);
     menuBar = new QMenuBar(topFiller);
     toolBar = new QToolBar(topFiller);
     editor = new Editor();
 
-    QVBoxLayout *layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout(); /* vertical layout */
     layout->setMargin(5);
-    layout->addWidget(topFiller);
+    layout->addWidget(menuBar);
+    layout->addWidget(toolBar);
     layout->addLayout(hBoxLayout);
-    layout->addWidget(bottomFiller);
-    widget->setLayout(layout);
 
+    mainWidget->setLayout(layout);
 
-
-    hBoxLayout->addWidget(menuBar);
     hBoxLayout->addWidget(toolBar);
     hBoxLayout->addWidget(editor);
-
 
     this->setLayout(hBoxLayout);
     //this->show();
@@ -40,14 +42,37 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createMenus();
 
+    this->setGeometry(50, 50, 800, 600); /* window size and position */
+    this->setWindowTitle(tr("ODA-IDE")); /* setup title */
+    createStatusbar(20);
+
 }
 
+/**
+ * @brief MainWindow::~MainWindow
+ */
 MainWindow::~MainWindow()
 {
     delete window;
 }
 
+/**
+ * @brief MainWindow::createMenus
+ * creates menus
+ */
 void MainWindow::createMenus()
+{
+    createFileMenu();
+    createEditMenu();
+    createCompileMenu();
+    createHelpMenu();
+}
+
+/**
+ * @brief MainWindow::createFileMenu
+ * creates file menu and elements
+ */
+void MainWindow::createFileMenu()
 {
     fileMenu = menuBar->addMenu(tr("&File"));
     fileMenu->addAction(newWindowAct);
@@ -58,14 +83,42 @@ void MainWindow::createMenus()
     fileMenu->addAction(saveFileAsAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
+}
 
+/**
+ * @brief MainWindow::createEditMenu
+ * creates edit menu and elements
+ */
+void MainWindow::createEditMenu()
+{
     editMenu = menuBar->addMenu(tr("&Edit"));
+    editMenu->addAction(undoAct);
+    editMenu->addAction(redoAct);
+    editMenu->addSeparator();
+    editMenu->addAction(cutAct);
+    editMenu->addAction(copyAct);
+    editMenu->addAction(pasteAct);
+}
 
-
+/**
+ * @brief MainWindow::createCompileMenu
+ */
+void MainWindow::createCompileMenu()
+{
     compilerMenu = menuBar->addMenu(tr("Com&piler"));
+    compilerMenu->addAction(compileAct);
+    compilerMenu->addAction(buildAct);
+    compilerMenu->addAction(makeAct);
+    compilerMenu->addSeparator();
+    compilerMenu->addAction(buildSettingsAct);
+}
 
+/**
+ * @brief MainWindow::createHelpMenu
+ */
+void MainWindow::createHelpMenu()
+{
     helpMenu = menuBar->addMenu(tr("&Help"));
-
 }
 
 /**
@@ -73,6 +126,17 @@ void MainWindow::createMenus()
  * This function creates menu elements and actions for them.
  */
 void MainWindow::createActions()
+{
+    createFileActions();
+    createEditActions();
+    createCompileActions();
+}
+
+/**
+ * @brief MainWindow::createFileActions
+ * creates actions for the file menu
+ */
+void MainWindow::createFileActions()
 {
     newWindowAct = new QAction(tr("&New Window"), this);
     newWindowAct->setShortcuts(QKeySequence::New);
@@ -108,6 +172,72 @@ void MainWindow::createActions()
     connect(exitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
 }
 
+/**
+ * @brief MainWindow::createEditActions
+ * creates actions for the edit menu
+ */
+void MainWindow::createEditActions()
+{
+    undoAct = new QAction(tr("Undo"), this);
+    undoAct->setShortcut(QKeySequence::Undo);
+    connect(undoAct, SIGNAL(triggered(bool)), editor, SLOT(undo()));
+
+    redoAct = new QAction(tr("Redo"), this);
+    redoAct->setShortcut(QKeySequence::Redo);
+    connect(redoAct, SIGNAL(triggered(bool)), editor, SLOT(redo()));
+
+    copyAct = new QAction(tr("Copy"), this);
+    copyAct->setShortcut(QKeySequence::Copy);
+    connect(copyAct, SIGNAL(triggered(bool)), editor, SLOT(copy()));
+
+    cutAct = new QAction(tr("Cut"), this);
+    cutAct->setShortcut(QKeySequence::Cut);
+    connect(cutAct, SIGNAL(triggered(bool)), editor, SLOT(cut()));
+
+    pasteAct = new QAction(tr("Paste"), this);
+    pasteAct->setShortcut(QKeySequence::Paste);
+    connect(pasteAct, SIGNAL(triggered(bool)), editor, SLOT(paste()));
+}
+
+/**
+ * @brief MainWindow::createCompileActions
+ * creates actions for the compiler menu
+ */
+void MainWindow::createCompileActions()
+{
+    compileAct = new QAction(tr("Compile"), this);
+
+    buildAct = new QAction(tr("Build"), this);
+
+    makeAct = new QAction(tr("Make"), this);
+
+    buildSettingsAct = new QAction(tr("Build Settings"), this);
+}
+
+/**
+ * @brief MainWindow::createHelpActions
+ * cretes actions for the help menu
+ */
+void MainWindow::createHelpActions()
+{
+
+}
+
+/**
+ * @brief MainWindow::createStatusbar
+ * @param height is the hieght of the statusbar
+ */
+void MainWindow::createStatusbar(int height)
+{
+    statusBar()->setMaximumHeight(height);
+    statusBar()->setMaximumHeight(height);
+    statusBar()->showMessage(tr("Started"), 2000);
+}
+
+/**
+ * @brief MainWindow::newWindow
+ * creates new window
+ */
 void MainWindow::newWindow()
 {
     newWindows = new MainWindow(this);

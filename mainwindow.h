@@ -21,6 +21,7 @@ private:
     Ui::MainWindow *window;
 
     Editor *editor; /* Code editor section */
+
     QHBoxLayout *hBoxLayout;
     QMenuBar *menuBar;
     QToolBar *toolBar;
@@ -45,6 +46,7 @@ private:
     QAction *redoAct;
     QAction *cutAct;
     QAction *copyAct;
+    QAction *pasteAct;
     /*compiler menu*/
     QAction *compileAct;
     QAction *buildAct;
@@ -57,7 +59,17 @@ private:
     MainWindow *newWindows;
 
     void createMenus();
+    void createFileMenu();
+    void createEditMenu();
+    void createCompileMenu();
+    void createHelpMenu();
+
     void createActions();
+    void createFileActions();
+    void createEditActions();
+    void createCompileActions();
+    void createHelpActions();
+    void createStatusbar(int height);
 
 public slots:
     void newWindow();
