@@ -58,6 +58,7 @@ private:
 
     MainWindow *newWindows;
 
+private:
     void createMenus();
     void createFileMenu();
     void createEditMenu();
@@ -71,8 +72,12 @@ private:
     void createHelpActions();
     void createStatusbar(int height);
 
+
+
 public slots:
     void newWindow();
+    void saveFile();
+    void openFile();
 
 };
 

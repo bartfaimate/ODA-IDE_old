@@ -14,6 +14,7 @@ Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+    setFontSettings();
 }
 
 //![constructor]
@@ -32,6 +33,34 @@ int Editor::lineNumberAreaWidth()
     int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
 
     return space;
+}
+
+void Editor::setFontSettings()
+{
+    font = new QFont();
+    font->setFamily("Courier");
+    font->setStyleHint(QFont::Monospace);
+    font->setFixedPitch(true);
+    font->setPointSize(10);
+    this->setFont(*font);
+
+    const int tabStop = 4;
+    metrics = new QFontMetrics(*font);
+    this->setTabStopWidth(tabStop * metrics->width(" "));
+}
+
+void Editor::setFontSettings(QString fontFaimily, int tabwidth)
+{
+    font = new QFont();
+    font->setFamily(fontFaimily);
+    font->setStyleHint(QFont::Monospace);
+    font->setFixedPitch(true);
+    font->setPointSize(10);
+
+    const int tabStop = tabwidth;
+    metrics = new QFontMetrics(*font);
+    this->setTabStopWidth(tabStop * metrics->width(" "));
+    this->setFont(*font);
 }
 
 //![extraAreaWidth]

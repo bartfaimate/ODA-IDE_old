@@ -24,6 +24,8 @@ public:
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+    void setFontSettings();
+    void setFontSettings(QString fontFaimily, int tabwidth);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -35,6 +37,8 @@ private slots:
 
 private:
     QWidget *lineNumberArea;
+    QFont *font;
+    QFontMetrics * metrics;
 };
 
 //![codeeditordefinition]

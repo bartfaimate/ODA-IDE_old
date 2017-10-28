@@ -1,6 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <iostream>
+#include <QTextStream>
+#include <QErrorMessage>
+#include <QFileDialog>
+
+using namespace std;
+
 /**
  * @brief MainWindow::MainWindow
  * @param parent
@@ -39,12 +46,18 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setLayout(hBoxLayout);
     //this->show();
 
+
     createActions();
     createMenus();
 
     this->setGeometry(50, 50, 800, 600); /* window size and position */
     this->setWindowTitle(tr("ODA-IDE")); /* setup title */
     createStatusbar(20);
+
+    /* stylesheet example */
+   // editor->setStyleSheet("background-color: #4d4f51; color: #0de0d9");
+
+   // editor->setStyleSheet("color: green");
 
 }
 
@@ -153,13 +166,14 @@ void MainWindow::createFileActions()
     //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
 
     openFileAct = new QAction(tr("&Open File"), this);
+    openFileAct->setShortcut(QKeySequence::Open);
     openFileAct->setStatusTip(tr("Open existing File"));
-    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+    connect(openFileAct, SIGNAL(triggered(bool)), this, SLOT(openFile()));
 
     saveFileAct = new QAction(tr("&Save"), this);
     saveFileAct->setShortcut(QKeySequence::Save);
     saveFileAct->setStatusTip(tr("Save a file"));
-    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+    connect(saveFileAct, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
 
     saveFileAsAct = new QAction(tr("Save as"), this);
     saveFileAsAct->setShortcut(QKeySequence::SaveAs);
@@ -232,6 +246,71 @@ void MainWindow::createStatusbar(int height)
     statusBar()->setMaximumHeight(height);
     statusBar()->setMaximumHeight(height);
     statusBar()->showMessage(tr("Started"), 2000);
+}
+
+/**
+ * @brief MainWindow::saveFile
+ */
+void MainWindow::saveFile()
+{
+    QString filename = "/home/mate/Desktop/qtest.c";
+    QFile *file = new QFile(filename);
+    try{
+        if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
+            QErrorMessage *fileError = new QErrorMessage();
+            fileError->showMessage(tr("ERROR by saving"));
+            return;
+        }
+       // while(file->readLine() != EOF)
+
+        file->write(editor->toPlainText().toStdString().c_str());
+        file->flush();
+        file->close();
+    }
+    catch(...){
+        QErrorMessage *fileError = new QErrorMessage();
+        fileError->showMessage(tr("ERROR by saving"));
+        try{
+            file->close();
+        }
+        catch(...){
+            cout << "[SAVE:] file close error" << endl;
+        }
+    }
+}
+
+/**
+ * @brief MainWindow::openFile
+ */
+void MainWindow::openFile()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), tr("All files(*)"));
+    cout << filename.toStdString() << endl;
+    if(filename.isEmpty()){
+        return;
+    }
+    else{
+        QFile *file = new QFile(filename);
+        try{
+            if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
+                QErrorMessage *fileError = new QErrorMessage();
+                fileError->showMessage(tr("ERROR by opening file"));
+            }
+            QTextStream *readFile = new QTextStream(file);
+            editor->document()->setPlainText(readFile->readAll());
+            file->flush();
+            file->close();
+        }
+        catch (...){
+            cout << "error opening file" << endl;
+            try {
+                file->close();
+            }
+            catch(...) {
+                cout << "[OPEN:] file close error" <<endl;
+            }
+        }
+    }
 }
 
 /**
