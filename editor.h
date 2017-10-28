@@ -3,6 +3,7 @@
 
 #include <QPlainTextEdit>
 #include <QObject>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -27,6 +28,9 @@ public:
     void setFontSettings();
     void setFontSettings(QString fontFaimily, int tabwidth);
 
+    QString getOpenedFileName();
+    void setOpenedFileName(QString openedFilename);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
@@ -39,6 +43,7 @@ private:
     QWidget *lineNumberArea;
     QFont *font;
     QFontMetrics * metrics;
+    QString openedFileName;
 };
 
 //![codeeditordefinition]

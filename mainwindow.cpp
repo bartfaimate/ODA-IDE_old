@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include <ui_mainwindow.h>
 
 #include <iostream>
 #include <QTextStream>
@@ -285,7 +285,7 @@ void MainWindow::saveFile()
 void MainWindow::openFile()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), tr("All files(*)"));
-    cout << filename.toStdString() << endl;
+
     if(filename.isEmpty()){
         return;
     }
@@ -296,6 +296,8 @@ void MainWindow::openFile()
                 QErrorMessage *fileError = new QErrorMessage();
                 fileError->showMessage(tr("ERROR by opening file"));
             }
+            this->editor->setOpenedFileName(filename);
+            cout << this->editor->getOpenedFileName().toStdString() << endl;
             QTextStream *readFile = new QTextStream(file);
             editor->document()->setPlainText(readFile->readAll());
             file->flush();

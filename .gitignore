@@ -7,3 +7,6 @@
 **.exe
 **.o
 
+# makefiles
+**Makefile*
+**.mk

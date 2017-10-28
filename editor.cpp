@@ -63,6 +63,16 @@ void Editor::setFontSettings(QString fontFaimily, int tabwidth)
     this->setFont(*font);
 }
 
+QString Editor::getOpenedFileName()
+{
+    return this->openedFileName;
+}
+
+void Editor::setOpenedFileName(QString openedFileName)
+{
+    this->openedFileName = openedFileName;
+}
+
 //![extraAreaWidth]
 
 //![slotUpdateExtraAreaWidth]
