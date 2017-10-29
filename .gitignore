@@ -10,3 +10,6 @@
 # makefiles
 **Makefile*
 **.mk
+
+**/style/**
+**/img/**

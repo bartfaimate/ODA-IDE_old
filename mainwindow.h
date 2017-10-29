@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include "editor.h"
+#include "console.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +21,8 @@ public:
 private:
     Ui::MainWindow *window;
 
-    Editor *editor; /* Code editor section */
+    Editor *editor;     /* Code editor section */
+    Console *console;   /* Console output */
 
     QHBoxLayout *hBoxLayout;
     QMenuBar *menuBar;
@@ -76,7 +78,9 @@ private:
 
 public slots:
     void newWindow();
+    void newFile();
     void saveFile();
+    void saveAsFile();
     void openFile();
 
 };

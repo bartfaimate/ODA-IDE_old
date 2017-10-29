@@ -37,12 +37,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     editor.cpp \
-    filemanager.cpp
+    filemanager.cpp \
+    console.cpp
 
 HEADERS += \
         mainwindow.h \
     editor.h \
-    filemanager.h
+    filemanager.h \
+    console.h
 
 #FORMS += \
  #       mainwindow.ui
