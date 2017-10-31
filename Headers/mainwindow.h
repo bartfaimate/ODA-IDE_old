@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 #include <QHBoxLayout>
+#include <QSplitter>
 #include "editor.h"
 #include "console.h"
+#include "highlighter.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,8 +25,10 @@ private:
 
     Editor *editor;     /* Code editor section */
     Console *console;   /* Console output */
+    Highlighter *highlighter; /* Syntax highlighter */
 
     QHBoxLayout *hBoxLayout;
+    QSplitter *verticalSplitter;
     QMenuBar *menuBar;
     QToolBar *toolBar;
     /* menus */

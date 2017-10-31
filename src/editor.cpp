@@ -1,6 +1,6 @@
 #include <QtWidgets>
 
-#include "editor.h"
+#include "Headers/editor.h"
 
 //![constructor]
 
@@ -20,7 +20,10 @@ Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
 //![constructor]
 
 //![extraAreaWidth]
-
+/**
+ * @brief Editor::lineNumberAreaWidth
+ * @return
+ */
 int Editor::lineNumberAreaWidth()
 {
     int digits = 1;
@@ -35,6 +38,9 @@ int Editor::lineNumberAreaWidth()
     return space;
 }
 
+/**
+ * @brief Editor::setFontSettings
+ */
 void Editor::setFontSettings()
 {
     font = new QFont();
@@ -49,6 +55,11 @@ void Editor::setFontSettings()
     this->setTabStopWidth(tabStop * metrics->width(" "));
 }
 
+/**
+ * @brief Editor::setFontSettings
+ * @param fontFaimily
+ * @param tabwidth
+ */
 void Editor::setFontSettings(QString fontFaimily, int tabwidth)
 {
     font = new QFont();
@@ -63,14 +74,46 @@ void Editor::setFontSettings(QString fontFaimily, int tabwidth)
     this->setFont(*font);
 }
 
+/**
+ * @brief Editor::setFileExtension
+ * @param fileName
+ */
+void Editor::setFileExtension()
+{
+    QRegularExpression regexp("(.)([a-zA-z0-9]+)$");
+    QRegularExpressionMatch match = regexp.match(this->openedFileName);
+    if(match.hasMatch()){
+        this->fileExtension = match.captured(2);
+    }
+}
+
+QString Editor::getFileExtension()
+{
+    return this->fileExtension;
+}
+
+/**
+ * @brief Editor::getOpenedFileName
+ * @return
+ */
 QString Editor::getOpenedFileName()
 {
     return this->openedFileName;
 }
 
+/**
+ * @brief Editor::setOpenedFileName
+ * @param openedFileName
+ */
 void Editor::setOpenedFileName(QString openedFileName)
 {
     this->openedFileName = openedFileName;
+}
+
+void Editor::setFileNameAndExtension(QString openedFileName)
+{
+    setOpenedFileName(openedFileName);
+    setFileExtension();
 }
 
 //![extraAreaWidth]

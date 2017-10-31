@@ -27,9 +27,12 @@ public:
     int lineNumberAreaWidth();
     void setFontSettings();
     void setFontSettings(QString fontFaimily, int tabwidth);
+    void setFileExtension();
+    QString getFileExtension();
 
     QString getOpenedFileName();
     void setOpenedFileName(QString openedFilename);
+    void setFileNameAndExtension(QString openedFileName);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -42,8 +45,10 @@ private slots:
 private:
     QWidget *lineNumberArea;
     QFont *font;
-    QFontMetrics * metrics;
+    QFontMetrics *metrics;
     QString openedFileName;
+    QString fileExtension;
+    int tabWidth;
 };
 
 //![codeeditordefinition]

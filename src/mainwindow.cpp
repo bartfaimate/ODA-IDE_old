@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "Headers/mainwindow.h"
 #include <ui_mainwindow.h>
 
 #include <iostream>
@@ -28,24 +28,34 @@ MainWindow::MainWindow(QWidget *parent) :
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     hBoxLayout = new QHBoxLayout(); /* horizontal layout */
+    verticalSplitter = new QSplitter();
 
     //ui->setupUi(this);
     menuBar = new QMenuBar(topFiller);
     toolBar = new QToolBar(topFiller);
     editor = new Editor();
+    highlighter = new Highlighter(editor->document());
     console = new Console();
 
-    QVBoxLayout *layout = new QVBoxLayout(); /* vertical layout */
-    layout->setMargin(5);
-    layout->addWidget(menuBar);
-    layout->addWidget(toolBar);
-    layout->addLayout(hBoxLayout);
+    verticalSplitter->addWidget(editor);
+    verticalSplitter->addWidget(console);
+    verticalSplitter->setOrientation(Qt::Vertical);
 
-    mainWidget->setLayout(layout);
+    QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
+    vBoxLayout->setMargin(5);
+    vBoxLayout->addWidget(menuBar);
+    vBoxLayout->addWidget(toolBar);
+    //vBoxLayout->addLayout(hBoxLayout);
+    //vBoxLayout->addWidget(editor);
+    //vBoxLayout->addWidget(console);
+    vBoxLayout->addWidget(verticalSplitter);
+
+    mainWidget->setLayout(vBoxLayout);
 
     hBoxLayout->addWidget(toolBar);
-    hBoxLayout->addWidget(editor);
-    hBoxLayout->addWidget(console);
+    //hBoxLayout->addWidget(editor);
+
+
 
     this->setLayout(hBoxLayout);
     //this->show();
@@ -61,6 +71,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QIcon *windowIcon = new QIcon("/home/mate/QtProjects/ODA-IDE/img/icon.png");
     this->setWindowIcon(*windowIcon);
 
+    this->console->setup();
+#if DEBUG == 1
+    this->console->appendDebuginfo("Debug mode started");
+#endif
     /* stylesheet example */
    // editor->setStyleSheet("background-color: #4d4f51; color: #0de0d9");
 
@@ -299,7 +313,9 @@ void MainWindow::saveAsFile()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save As File"), tr("All files(*)"));
 
-    editor->setOpenedFileName(filename);     /* set up opened filename */
+    //editor->setOpenedFileName(filename);     /* set up opened filename */
+    //editor->setFileExtension();
+
     QFile *file = new QFile(filename);
     try{
         if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -307,9 +323,16 @@ void MainWindow::saveAsFile()
             fileError->showMessage(tr("ERROR by saving"));
             return;
         }
+
+        editor->setFileNameAndExtension(filename);
+        QString info = ">> " + filename + " saved\n";
+        console->appendPlainText(info);
+        statusBar()->showMessage(editor->getFileExtension());
+
         file->write(editor->toPlainText().toStdString().c_str());
         file->flush();
         file->close();
+
     }
     catch(...){
         QErrorMessage *fileError = new QErrorMessage();
@@ -319,6 +342,7 @@ void MainWindow::saveAsFile()
         }
         catch(...){
             cout << "[SAVE AS:] file close error" << endl;
+            this->console->appendDebuginfo("[SAVE AS:] file close error");
         }
     }
 
@@ -336,27 +360,36 @@ void MainWindow::openFile()
     }
     else{
         QFile *file = new QFile(filename);
+
         try{
             if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
                 QErrorMessage *fileError = new QErrorMessage();
                 fileError->showMessage(tr("ERROR by opening file"));
             }
-            this->editor->setOpenedFileName(filename);                      /* set up the filename for the editor */
+
+            this->editor->setFileNameAndExtension(filename);
+            QString info = ">> " + filename + " opened\n";
+            console->appendPlainText(info);
+            statusBar()->showMessage(editor->getFileExtension());
 #if DEBUG == 1
             cout << this->editor->getOpenedFileName().toStdString() << endl;
+            cout << this->editor->getFileExtension().toStdString() << endl;
 #endif
             QTextStream *readFile = new QTextStream(file);
             editor->document()->setPlainText(readFile->readAll());
             file->flush();
             file->close();
+
         }
         catch (...){
             cout << "error opening file" << endl;
+            console->appendDebuginfo("[OPENFILE]: error opening file");
             try {
                 file->close();
             }
             catch(...) {
                 cout << "[OPEN:] file close error" <<endl;
+                console->appendDebuginfo("[OPENFILE]: error closing file");
             }
         }
     }
@@ -382,17 +415,27 @@ void MainWindow::newFile()
     cout << "new file" << endl;
 #endif
     QString filename = QFileDialog::getSaveFileName(this, tr("New File"), tr("All files(*)"));
-
-    editor->setOpenedFileName(filename);     /* set up opened filename */
     QFile *file = new QFile(filename);
+
     try{
         if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
             QErrorMessage *fileError = new QErrorMessage();
             fileError->showMessage(tr("ERROR by saving"));
             return;
         }
+        editor->setFileNameAndExtension(filename);
+        QString info = ">> " + filename + " created\n";
+        console->appendPlainText(info);
+        statusBar()->showMessage(editor->getFileExtension());
 
+        editor->clear();
         file->close();
+
+#if DEBUG == 1
+        cout << filename.toStdString() << endl;
+        console->appendDebuginfo(filename);
+        console->appendDebuginfo(editor->getFileExtension());
+#endif
     }
     catch(...){
         QErrorMessage *fileError = new QErrorMessage();
@@ -402,9 +445,8 @@ void MainWindow::newFile()
         }
         catch(...){
             cout << "[NEW FILE:] file close error" << endl;
+            console->appendDebuginfo("[NEWFILE]: error closing file");
         }
     }
-#if DEBUG == 1
-    cout << filename.toStdString() << endl;
-#endif
+
 }

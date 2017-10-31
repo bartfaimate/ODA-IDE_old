@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+#QT       += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,17 +35,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    editor.cpp \
-    filemanager.cpp \
-    console.cpp
+        src/main.cpp \
+        src/mainwindow.cpp \
+        src/editor.cpp \
+        src/filemanager.cpp \
+        src/console.cpp \
+        src/test.cpp \
+        src/highlighter.cpp
 
 HEADERS += \
-        mainwindow.h \
-    editor.h \
-    filemanager.h \
-    console.h
+        Headers/mainwindow.h \
+        Headers/editor.h \
+        Headers/filemanager.h \
+        Headers/console.h \
+        Headers/highlighter.h
 
 #FORMS += \
  #       mainwindow.ui
