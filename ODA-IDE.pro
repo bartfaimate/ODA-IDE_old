@@ -6,8 +6,8 @@
 
 QT       += core gui
 #QT       += testlib
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += widgets
+#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ODA-IDE
 TEMPLATE = app
@@ -35,22 +35,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        src/main.cpp \
-        src/mainwindow.cpp \
-        src/editor.cpp \
-        src/filemanager.cpp \
-        src/console.cpp \
-        src/test.cpp \
-        src/highlighter.cpp \
-    src/tab.cpp
+    src/console.cpp \
+    src/editor.cpp \
+    src/filemanager.cpp \
+    src/highlighter.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/tab.cpp \
+
 
 HEADERS += \
-        Headers/mainwindow.h \
-        Headers/editor.h \
-        Headers/filemanager.h \
-        Headers/console.h \
-        Headers/highlighter.h \
-    Headers/tab.h
+    Headers/console.h \
+    Headers/editor.h \
+    Headers/filemanager.h \
+    Headers/highlighter.h \
+    Headers/mainwindow.h \
+    Headers/tab.h \
 
-#FORMS += \
- #       mainwindow.ui
+
+DISTFILES +=

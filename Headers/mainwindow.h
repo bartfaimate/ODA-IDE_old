@@ -25,7 +25,7 @@ public:
 private:
     Ui::MainWindow *window;
 
-    Editor *editor;     /* Code editor section */
+    //Editor *editor;     /* Code editor section */
     Console *console;   /* Console output */
     Highlighter *highlighter; /* Syntax highlighter */
     QTabWidget *tab;    /* manages the tabs */
@@ -85,6 +85,9 @@ private:
     void createHelpMenu();
     void createButtons();
 
+    void setupTabs();
+
+
     void createActions();
     void createFileActions();
     void createEditActions();
@@ -100,6 +103,7 @@ public slots:
     void saveFile();
     void saveAsFile();
     void openFile();
+    void addTab(const QString &label);
 
 };
 

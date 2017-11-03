@@ -23,22 +23,21 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createMenus();
     createButtons();
+    if (tab != NULL){
+        setupTabs();
+    }
 
     this->setGeometry(50, 50, 800, 600); /* window size and position */
     this->setWindowTitle(tr("ODA-IDE")); /* setup title */
     createStatusbar(20);
 
-    QIcon *windowIcon = new QIcon("/home/mate/QtProjects/ODA-IDE/img/icon.png");
+    QIcon *windowIcon = new QIcon("./img/icon.png");
     this->setWindowIcon(*windowIcon);
 
     this->console->setup();
 #if DEBUG == 1
     this->console->appendDebuginfo("Debug mode started");
 #endif
-    /* stylesheet example */
-   // editor->setStyleSheet("background-color: #4d4f51; color: #0de0d9");
-
-   // editor->setStyleSheet("color: green");
 
 }
 
@@ -71,8 +70,8 @@ void MainWindow::createLayout()
     //ui->setupUi(this);
     menuBar = new QMenuBar(topFiller);
     toolBar = new QToolBar(topFiller);
-    editor = new Editor();
-    highlighter = new Highlighter(editor->document());
+   // editor = new Editor();
+    //highlighter = new Highlighter(editor->document());
     console = new Console();
     tab = new QTabWidget();
 
@@ -85,14 +84,19 @@ void MainWindow::createLayout()
     vBoxLayout->addWidget(menuBar);
     vBoxLayout->addWidget(toolBar);
     vBoxLayout->addLayout(hBoxLayout);
-//    vBoxLayout->addWidget(verticalSplitter);
-    vBoxLayout->addWidget(tab);
-    tab->addTab(this->editor,tr("(New)"));
+    vBoxLayout->addWidget(verticalSplitter);
+ //   vBoxLayout->addWidget(tab);
+
     mainWidget->setLayout(vBoxLayout);
 
     hBoxLayout->addWidget(toolBar);
 
     this->setLayout(hBoxLayout);
+
+    //tab->addTab(this->editor,tr("(New)"));
+    this->addTab("1");
+    this->addTab("2");
+
 
 }
 
@@ -183,6 +187,22 @@ void MainWindow::createButtons()
 }
 
 /**
+ * @brief MainWindow::setupTabs
+ */
+void MainWindow::setupTabs()
+{
+    tab->setTabsClosable(true);
+    tab->setMovable(true);
+}
+
+void MainWindow::addTab(const QString &label)
+{
+    Editor *tabeditor = new Editor();
+    Highlighter *tabhighlighter = new Highlighter(tabeditor->document());
+   this->tab->addTab(tabeditor, label);
+}
+
+/**
  * @brief MainWindow::createActions
  * This function creates menu elements and actions for them.
  */
@@ -208,7 +228,7 @@ void MainWindow::createFileActions()
     newTabAct = new QAction(tr("New &Tab"), this);
     newTabAct->setShortcuts(QKeySequence::AddTab);
     newTabAct->setStatusTip(tr("Create new tab"));
-    //connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+    connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(addTab(tr())));
 
     newFileAct = new QAction(tr("New F&ile"), this);
     newFileAct->setStatusTip(tr("Create new File"));
@@ -241,25 +261,27 @@ void MainWindow::createFileActions()
  */
 void MainWindow::createEditActions()
 {
+    Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+
     undoAct = new QAction(tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
-    connect(undoAct, SIGNAL(triggered(bool)), editor, SLOT(undo()));
+    connect(undoAct, SIGNAL(triggered(bool)), currentEditor, SLOT(undo()));
 
     redoAct = new QAction(tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
-    connect(redoAct, SIGNAL(triggered(bool)), editor, SLOT(redo()));
+    connect(redoAct, SIGNAL(triggered(bool)), currentEditor, SLOT(redo()));
 
     copyAct = new QAction(tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
-    connect(copyAct, SIGNAL(triggered(bool)), editor, SLOT(copy()));
+    connect(copyAct, SIGNAL(triggered(bool)), currentEditor, SLOT(copy()));
 
     cutAct = new QAction(tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
-    connect(cutAct, SIGNAL(triggered(bool)), editor, SLOT(cut()));
+    connect(cutAct, SIGNAL(triggered(bool)), currentEditor, SLOT(cut()));
 
     pasteAct = new QAction(tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
-    connect(pasteAct, SIGNAL(triggered(bool)), editor, SLOT(paste()));
+    connect(pasteAct, SIGNAL(triggered(bool)), currentEditor, SLOT(paste()));
 }
 
 /**
@@ -304,7 +326,8 @@ void MainWindow::createStatusbar(int height)
  */
 void MainWindow::saveFile()
 {
-    QString filename = editor->getOpenedFileName();
+    Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+    QString filename = currentEditor->getOpenedFileName();
     QFile *file = new QFile(filename);
     try{
         if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -314,7 +337,8 @@ void MainWindow::saveFile()
         }
        // while(file->readLine() != EOF)
 
-        file->write(editor->toPlainText().toStdString().c_str());
+
+        file->write(currentEditor->toPlainText().toStdString().c_str());
         file->flush();
         file->close();
     }
@@ -348,13 +372,13 @@ void MainWindow::saveAsFile()
             fileError->showMessage(tr("ERROR by saving"));
             return;
         }
-
-        editor->setFileNameAndExtension(filename);
+        Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+        currentEditor->setFileNameAndExtension(filename);
         QString info = ">> " + filename + " saved\n";
         console->appendPlainText(info);
-        statusBar()->showMessage(editor->getFileExtension());
+        statusBar()->showMessage(currentEditor->getFileExtension());
 
-        file->write(editor->toPlainText().toStdString().c_str());
+        file->write(currentEditor->toPlainText().toStdString().c_str());
         file->flush();
         file->close();
 
@@ -392,16 +416,19 @@ void MainWindow::openFile()
                 fileError->showMessage(tr("ERROR by opening file"));
             }
 
-            this->editor->setFileNameAndExtension(filename);
+            /* cast QWidget to Editor */
+            Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+            currentEditor->setFileNameAndExtension(filename);
+
             QString info = ">> " + filename + " opened\n";
             console->appendPlainText(info);
-            statusBar()->showMessage(editor->getFileExtension());
+            statusBar()->showMessage(currentEditor->getFileExtension());
 #if DEBUG == 1
-            cout << this->editor->getOpenedFileName().toStdString() << endl;
-            cout << this->editor->getFileExtension().toStdString() << endl;
+            cout <<  currentEditor->getOpenedFileName().toStdString() << endl;
+            cout <<  currentEditor->getFileExtension().toStdString() << endl;
 #endif
             QTextStream *readFile = new QTextStream(file);
-            editor->document()->setPlainText(readFile->readAll());
+            currentEditor->document()->setPlainText(readFile->readAll());
             file->flush();
             file->close();
 
@@ -448,18 +475,19 @@ void MainWindow::newFile()
             fileError->showMessage(tr("ERROR by saving"));
             return;
         }
-        editor->setFileNameAndExtension(filename);
+        Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+        currentEditor->setFileNameAndExtension(filename);
         QString info = ">> " + filename + " created\n";
         console->appendPlainText(info);
-        statusBar()->showMessage(editor->getFileExtension());
+        statusBar()->showMessage(currentEditor->getFileExtension());
 
-        editor->clear();
+        currentEditor->clear();
         file->close();
 
 #if DEBUG == 1
         cout << filename.toStdString() << endl;
         console->appendDebuginfo(filename);
-        console->appendDebuginfo(editor->getFileExtension());
+        console->appendDebuginfo(currentEditor->getFileExtension());
 #endif
     }
     catch(...){
