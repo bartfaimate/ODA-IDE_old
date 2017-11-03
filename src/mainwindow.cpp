@@ -19,50 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     window(new Ui::MainWindow)
 {
 
-    /* widget is mainwidget*/
-    QWidget *mainWidget = new QWidget;
-    setCentralWidget(mainWidget);
-    QWidget *topFiller = new QWidget;
-    topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QWidget *bottomFiller = new QWidget;
-    bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    hBoxLayout = new QHBoxLayout(); /* horizontal layout */
-    verticalSplitter = new QSplitter();
-
-    //ui->setupUi(this);
-    menuBar = new QMenuBar(topFiller);
-    toolBar = new QToolBar(topFiller);
-    editor = new Editor();
-    highlighter = new Highlighter(editor->document());
-    console = new Console();
-
-    verticalSplitter->addWidget(editor);
-    verticalSplitter->addWidget(console);
-    verticalSplitter->setOrientation(Qt::Vertical);
-
-    QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
-    vBoxLayout->setMargin(5);
-    vBoxLayout->addWidget(menuBar);
-    vBoxLayout->addWidget(toolBar);
-    //vBoxLayout->addLayout(hBoxLayout);
-    //vBoxLayout->addWidget(editor);
-    //vBoxLayout->addWidget(console);
-    vBoxLayout->addWidget(verticalSplitter);
-
-    mainWidget->setLayout(vBoxLayout);
-
-    hBoxLayout->addWidget(toolBar);
-    //hBoxLayout->addWidget(editor);
-
-
-
-    this->setLayout(hBoxLayout);
-    //this->show();
-
-
+    createLayout();
     createActions();
     createMenus();
+    createButtons();
 
     this->setGeometry(50, 50, 800, 600); /* window size and position */
     this->setWindowTitle(tr("ODA-IDE")); /* setup title */
@@ -88,6 +48,52 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete window;
+}
+
+/**
+ * @brief MainWindow::createLayout
+ */
+void MainWindow::createLayout()
+{
+    /* widget is mainwidget*/
+    QWidget *mainWidget = new QWidget;
+    setCentralWidget(mainWidget);
+    QWidget *topFiller = new QWidget;
+    topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QWidget *bottomFiller = new QWidget;
+    bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    hBoxLayout = new QHBoxLayout(); /* horizontal layout */
+
+    verticalSplitter = new QSplitter();
+    verticalSplitter->setOrientation(Qt::Vertical);
+
+    //ui->setupUi(this);
+    menuBar = new QMenuBar(topFiller);
+    toolBar = new QToolBar(topFiller);
+    editor = new Editor();
+    highlighter = new Highlighter(editor->document());
+    console = new Console();
+    tab = new QTabWidget();
+
+    verticalSplitter->addWidget(tab);
+    verticalSplitter->addWidget(console);
+
+//most jó a file menü gomb, viszont splitter nem
+    QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
+    vBoxLayout->setMargin(5);
+    vBoxLayout->addWidget(menuBar);
+    vBoxLayout->addWidget(toolBar);
+    vBoxLayout->addLayout(hBoxLayout);
+//    vBoxLayout->addWidget(verticalSplitter);
+    vBoxLayout->addWidget(tab);
+    tab->addTab(this->editor,tr("(New)"));
+    mainWidget->setLayout(vBoxLayout);
+
+    hBoxLayout->addWidget(toolBar);
+
+    this->setLayout(hBoxLayout);
+
 }
 
 /**
@@ -155,6 +161,25 @@ void MainWindow::createHelpMenu()
     helpMenu = menuBar->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
+}
+
+void MainWindow::createButtons()
+{
+    newWindowButton = new QPushButton(tr("New Window"));
+    toolBar->addWidget(newWindowButton);
+
+    newFileButton = new QPushButton(tr("New File"));
+    toolBar->addWidget(newFileButton);
+
+    saveButton = new QPushButton(tr("Save"));
+    toolBar->addWidget(saveButton);
+
+    compileButton = new QPushButton(tr("Compile"));
+    toolBar->addWidget(compileButton);
+
+    runButton = new QPushButton(tr("Run"));
+    toolBar->addWidget(runButton);
+
 }
 
 /**

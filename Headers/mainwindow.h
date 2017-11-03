@@ -3,10 +3,12 @@
 
 #include <QMainWindow>
 #include <QHBoxLayout>
+#include <QPushButton>
 #include <QSplitter>
 #include "editor.h"
 #include "console.h"
 #include "highlighter.h"
+#include "tab.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,11 +28,21 @@ private:
     Editor *editor;     /* Code editor section */
     Console *console;   /* Console output */
     Highlighter *highlighter; /* Syntax highlighter */
+    QTabWidget *tab;    /* manages the tabs */
 
     QHBoxLayout *hBoxLayout;
     QSplitter *verticalSplitter;
+    QSplitter *horizontalSplitter;
     QMenuBar *menuBar;
     QToolBar *toolBar;
+
+    /* toolbar buttons */
+    QPushButton *newFileButton;
+    QPushButton *saveButton;
+    QPushButton *newWindowButton;
+    QPushButton *compileButton;
+    QPushButton *runButton;
+
     /* menus */
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -65,11 +77,13 @@ private:
     MainWindow *newWindows;
 
 private:
+    void createLayout();
     void createMenus();
     void createFileMenu();
     void createEditMenu();
     void createCompileMenu();
     void createHelpMenu();
+    void createButtons();
 
     void createActions();
     void createFileActions();

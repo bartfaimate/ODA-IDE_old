@@ -41,14 +41,16 @@ SOURCES += \
         src/filemanager.cpp \
         src/console.cpp \
         src/test.cpp \
-        src/highlighter.cpp
+        src/highlighter.cpp \
+    src/tab.cpp
 
 HEADERS += \
         Headers/mainwindow.h \
         Headers/editor.h \
         Headers/filemanager.h \
         Headers/console.h \
-        Headers/highlighter.h
+        Headers/highlighter.h \
+    Headers/tab.h
 
 #FORMS += \
  #       mainwindow.ui
