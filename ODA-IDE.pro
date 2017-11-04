@@ -6,8 +6,8 @@
 
 QT       += core gui
 #QT       += testlib
-QT += widgets
-#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ODA-IDE
 TEMPLATE = app
@@ -54,3 +54,6 @@ HEADERS += \
 
 
 DISTFILES +=
+
+FORMS += \
+ #   mainwindow.ui

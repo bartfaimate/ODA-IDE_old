@@ -67,9 +67,11 @@ void MainWindow::createLayout()
     verticalSplitter = new QSplitter();
     verticalSplitter->setOrientation(Qt::Vertical);
 
+    menuBar = new QMenuBar();
+    toolBar = new QToolBar();
     //ui->setupUi(this);
-    menuBar = new QMenuBar(topFiller);
-    toolBar = new QToolBar(topFiller);
+    //menuBar = new QMenuBar(topFiller);
+    //toolBar = new QToolBar(topFiller);
    // editor = new Editor();
     //highlighter = new Highlighter(editor->document());
     console = new Console();

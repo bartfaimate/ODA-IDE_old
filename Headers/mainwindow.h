@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QToolBar>
+#include <QStatusBar>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSplitter>
