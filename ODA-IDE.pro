@@ -55,5 +55,3 @@ HEADERS += \
 
 DISTFILES +=
 
-FORMS += \
- #   mainwindow.ui

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QToolBar>
+#include <QMenu>
+#include <QMenuBar>
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -30,7 +32,9 @@ private:
     //Editor *editor;     /* Code editor section */
     Console *console;   /* Console output */
     Highlighter *highlighter; /* Syntax highlighter */
-    QTabWidget *tab;    /* manages the tabs */
+  //  QTabWidget *tab;    /* manages the tabs */
+
+    Tab* tab;
 
     QHBoxLayout *hBoxLayout;
     QSplitter *verticalSplitter;
@@ -40,6 +44,7 @@ private:
 
     /* toolbar buttons */
     QPushButton *newFileButton;
+    QPushButton *newTabButton;
     QPushButton *saveButton;
     QPushButton *newWindowButton;
     QPushButton *compileButton;
@@ -105,7 +110,7 @@ public slots:
     void saveFile();
     void saveAsFile();
     void openFile();
-    void addTab(const QString &label);
+    void addTab();
 
 };
 

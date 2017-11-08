@@ -10,19 +10,24 @@
 #include "highlighter.h"
 
 
-class TabContent : public QWidget
+class Tab : public QTabWidget
 {
-public:
-    TabContent(QWidget *parent = 0);
 
-    ~TabContent();
+     Q_OBJECT
+public:
+   // Tab(QWidget *parent = 0);
+
+   // ~Tab();
 
 private:
 
-    Editor *editor;     /* Code editor section */
-    Highlighter *highlighter; /* Syntax highlighter */
-
 public slots:
+    void closeTab(int index);
+    void undo();
+    void redo();
+    void copy();
+    void cut();
+    void paste();
 };
 
 #endif // TAB_H

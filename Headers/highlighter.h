@@ -4,6 +4,7 @@
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QRegularExpression>
+#include "Headers/editor.h"
 
 class QTextDocument;
 
@@ -13,6 +14,7 @@ class Highlighter : public QSyntaxHighlighter
 
 public:
     Highlighter(QTextDocument *parent = 0);
+    Highlighter(Editor *parent);
 
 protected:
     void highlightBlock(const QString &text) override;
@@ -34,6 +36,9 @@ private:
     QTextCharFormat multiLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
+
+public slots:
+ //   void changeHighlightingRule();
 };
 
 #endif // HIGHLIGHTER_H

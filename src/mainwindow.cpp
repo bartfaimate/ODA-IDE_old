@@ -1,5 +1,5 @@
 #include "Headers/mainwindow.h"
-#include <ui_mainwindow.h>
+//#include <ui_mainwindow.h>
 
 #include <iostream>
 #include <QTextStream>
@@ -15,8 +15,8 @@ using namespace std;
  * @param parent
  */
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    window(new Ui::MainWindow)
+    QMainWindow(parent)//,
+    //window(new Ui::MainWindow)
 {
 
     createLayout();
@@ -34,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QIcon *windowIcon = new QIcon("./img/icon.png");
     this->setWindowIcon(*windowIcon);
 
+
+
     this->console->setup();
 #if DEBUG == 1
     this->console->appendDebuginfo("Debug mode started");
@@ -46,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
  */
 MainWindow::~MainWindow()
 {
-    delete window;
+    delete this;
 }
 
 /**
@@ -69,14 +71,14 @@ void MainWindow::createLayout()
 
     menuBar = new QMenuBar();
     toolBar = new QToolBar();
-    //ui->setupUi(this);
-    //menuBar = new QMenuBar(topFiller);
-    //toolBar = new QToolBar(topFiller);
+
+    menuBar = new QMenuBar(topFiller);
+    toolBar = new QToolBar(topFiller);
    // editor = new Editor();
     //highlighter = new Highlighter(editor->document());
     console = new Console();
-    tab = new QTabWidget();
-
+    //tab = new QTabWidget();
+    tab =  new Tab();
     verticalSplitter->addWidget(tab);
     verticalSplitter->addWidget(console);
 
@@ -95,10 +97,8 @@ void MainWindow::createLayout()
 
     this->setLayout(hBoxLayout);
 
-    //tab->addTab(this->editor,tr("(New)"));
-    this->addTab("1");
-    this->addTab("2");
-
+    /* add the first tab with editor */
+    this->addTab();
 
 }
 
@@ -171,19 +171,34 @@ void MainWindow::createHelpMenu()
 
 void MainWindow::createButtons()
 {
-    newWindowButton = new QPushButton(tr("New Window"));
+    QIcon *newWindowIcon = new QIcon("./img/icons/new_window.png");
+    QIcon *newTabIcon = new QIcon("./img/icons/new_tab.png");
+    QIcon *newFileIcon = new QIcon("./img/icons/new_file.png");
+    QIcon *saveIcon = new QIcon("./img/icons/save.png");
+    QIcon *buildIcon = new QIcon("./img/icons/build.png");
+    QIcon *runIcon = new QIcon("./img/icons/run.png");
+
+    newWindowButton = new QPushButton(*newWindowIcon, tr(""));
     toolBar->addWidget(newWindowButton);
+    connect(newWindowButton, SIGNAL(clicked(bool)), this, SLOT(newWindow()));
 
-    newFileButton = new QPushButton(tr("New File"));
+    newTabButton= new QPushButton(*newTabIcon, tr(""));
+    toolBar->addWidget(newTabButton);
+    connect(newTabButton, SIGNAL(clicked(bool)), this, SLOT(addTab()));
+
+    newFileButton = new QPushButton(*newFileIcon, tr(""));
     toolBar->addWidget(newFileButton);
+    connect(newFileButton, SIGNAL(clicked(bool)), this, SLOT(newFile()));
 
-    saveButton = new QPushButton(tr("Save"));
+    saveButton = new QPushButton(*saveIcon, tr(""));
     toolBar->addWidget(saveButton);
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
 
-    compileButton = new QPushButton(tr("Compile"));
+
+    compileButton = new QPushButton(*buildIcon, tr(""));
     toolBar->addWidget(compileButton);
 
-    runButton = new QPushButton(tr("Run"));
+    runButton = new QPushButton(*runIcon, tr(""));
     toolBar->addWidget(runButton);
 
 }
@@ -195,13 +210,21 @@ void MainWindow::setupTabs()
 {
     tab->setTabsClosable(true);
     tab->setMovable(true);
+
+    connect(tab, SIGNAL(tabCloseRequested(int)), tab, SLOT(closeTab(int)));
 }
 
-void MainWindow::addTab(const QString &label)
+void MainWindow::addTab()
 {
     Editor *tabeditor = new Editor();
     Highlighter *tabhighlighter = new Highlighter(tabeditor->document());
-   this->tab->addTab(tabeditor, label);
+    this->tab->addTab(tabeditor, tr("(new)"));
+    tab->setCurrentIndex(tab->count() - 1);
+
+#if DEBUG == 1
+
+    cout << "tabsnum:" << tab->count()<<endl;
+#endif
 }
 
 /**
@@ -230,7 +253,7 @@ void MainWindow::createFileActions()
     newTabAct = new QAction(tr("New &Tab"), this);
     newTabAct->setShortcuts(QKeySequence::AddTab);
     newTabAct->setStatusTip(tr("Create new tab"));
-    connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(addTab(tr())));
+    connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(addTab()));
 
     newFileAct = new QAction(tr("New F&ile"), this);
     newFileAct->setStatusTip(tr("Create new File"));
@@ -267,23 +290,23 @@ void MainWindow::createEditActions()
 
     undoAct = new QAction(tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
-    connect(undoAct, SIGNAL(triggered(bool)), currentEditor, SLOT(undo()));
+    connect(undoAct, SIGNAL(triggered(bool)), tab, SLOT(undo()));
 
     redoAct = new QAction(tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
-    connect(redoAct, SIGNAL(triggered(bool)), currentEditor, SLOT(redo()));
+    connect(redoAct, SIGNAL(triggered(bool)), tab, SLOT(redo()));
 
     copyAct = new QAction(tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
-    connect(copyAct, SIGNAL(triggered(bool)), currentEditor, SLOT(copy()));
+    connect(copyAct, SIGNAL(triggered(bool)), tab, SLOT(copy()));
 
     cutAct = new QAction(tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
-    connect(cutAct, SIGNAL(triggered(bool)), currentEditor, SLOT(cut()));
+    connect(cutAct, SIGNAL(triggered(bool)), tab, SLOT(cut()));
 
     pasteAct = new QAction(tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
-    connect(pasteAct, SIGNAL(triggered(bool)), currentEditor, SLOT(paste()));
+    connect(pasteAct, SIGNAL(triggered(bool)), tab, SLOT(paste()));
 }
 
 /**
@@ -485,6 +508,10 @@ void MainWindow::newFile()
 
         currentEditor->clear();
         file->close();
+        if(!Editor(tab->currentWidget()).document()->isEmpty()){
+            addTab();
+            tab->setCurrentIndex(tab->count());
+        }
 
 #if DEBUG == 1
         cout << filename.toStdString() << endl;

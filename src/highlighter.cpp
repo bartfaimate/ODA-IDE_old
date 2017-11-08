@@ -8,17 +8,27 @@ Highlighter::Highlighter(QTextDocument *parent)
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
     QStringList keywordPatterns;
-    keywordPatterns << "\\bchar\\b" << "\\bclass\\b" << "\\bconst\\b"
-                    << "\\bdouble\\b" << "\\benum\\b" << "\\bexplicit\\b"
-                    << "\\bfriend\\b" << "\\binline\\b" << "\\bint\\b"
-                    << "\\blong\\b" << "\\bnamespace\\b" << "\\boperator\\b"
+    keywordPatterns << "\\b__asm\\b" << "\\bauto\\b" << "\\bbool\\b"
+                    << "\\bbreak\\b" << "\\bcase\\b" << "\\bcatch\\b"
+                    << "\\bchar\\b" << "\\bclass\\b" << "\\bconst\\b"
+                    << "\\bcontinue\\b" << "\\bdefault\\b" << "\\bdelete\\b"
+                    << "\\bdo\\b"
+                    << "\\bdouble\\b" << "\\benum\\b" << "\\belse\\b"
+                    << "\\bexplicit\\b" << "\\bextern\\b" << "\\bfalse\\b"
+                    << "\\bfriend\\b" << "\\bfloat\\b"  << "\\bfor\\b"
+                    << "\\bgoto\\b"
+                    << "\\binline\\b" << "\\bint\\b" << "\\bif\\b"
+                    << "\\blong\\b" << "\\bnamespace\\b" << "\\bnew\\b"
+                    << "\\boperator\\b"
                     << "\\bprivate\\b" << "\\bprotected\\b" << "\\bpublic\\b"
                     << "\\bshort\\b" << "\\bsignals\\b" << "\\bsigned\\b"
-                    << "\\bslots\\b" << "\\bstatic\\b" << "\\bstruct\\b"
-                    << "\\btemplate\\b" << "\\btypedef\\b" << "\\btypename\\b"
+                    << "\\bslots\\b" << "\\bsizeof\\b" << "\\bstatic\\b"
+                    << "\\bstruct\\b" << "\\bswitch\\b"
+                    << "\\btemplate\\b" << "\\bthis\\b" << "\\bthrow\\b"
+                    <<"\\btypedef\\b" << "\\btypename\\b" << "\\btrue\\b"
                     << "\\bunion\\b" << "\\bunsigned\\b" << "\\bvirtual\\b"
-                    << "\\bvoid\\b" << "\\bvolatile\\b" << "\\bbool\\b"
-                    << "\\breturn\\b" << "\\bfloat\\b"   ;
+                    << "\\bvoid\\b" << "\\bvolatile\\b" << "\\bwhile\\b"
+                    << "\\breturn\\b"   ;
     foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern);
         rule.format = keywordFormat;

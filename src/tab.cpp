@@ -1,14 +1,39 @@
 #include "Headers/tab.h"
 
-TabContent::TabContent(QWidget *parent) : QWidget(parent)
+
+
+void Tab::closeTab(int index)
 {
-
-    editor = new Editor();
-    highlighter = new Highlighter(editor->document());
-
+    removeTab(index);
 }
 
-TabContent::~TabContent()
+void Tab::undo()
 {
-    delete this;
+    Editor *currentEditor = dynamic_cast<Editor*>(this->currentWidget());
+    currentEditor->undo();
 }
+
+void Tab::redo()
+{
+    Editor *currentEditor = dynamic_cast<Editor*>(this->currentWidget());
+    currentEditor->redo();
+}
+
+void Tab::copy()
+{
+    Editor *currentEditor = dynamic_cast<Editor*>(this->currentWidget());
+    currentEditor->copy();
+}
+
+void Tab::cut()
+{
+    Editor *currentEditor = dynamic_cast<Editor*>(this->currentWidget());
+    currentEditor->cut();
+}
+
+void Tab::paste()
+{
+    Editor *currentEditor = dynamic_cast<Editor*>(this->currentWidget());
+    currentEditor->paste();
+}
+
