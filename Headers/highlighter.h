@@ -4,10 +4,22 @@
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QRegularExpression>
+#include <QMap>
 #include "Headers/editor.h"
 
-class QTextDocument;
 
+class QTextDocument;
+/**
+ * @brief The Highlighter class
+ *
+ * keyword
+ * function
+ * variable
+ * funcion
+ * control (for, while, if, switch)
+ * comment
+ * multilinecomment
+ */
 class Highlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
@@ -27,6 +39,8 @@ private:
     };
     QVector<HighlightingRule> highlightingRules;
 
+    QMap<QString, QVector<HighlightingRule>> highlightWithExtension;
+
     QRegularExpression commentStartExpression;
     QRegularExpression commentEndExpression;
 
@@ -38,7 +52,12 @@ private:
     QTextCharFormat functionFormat;
 
 public slots:
- //   void changeHighlightingRule();
+   /* void CHighlightingRule();
+    void CppHighlightingRule();
+    void PythonHighlightingRule();
+    void JavaHighlightingRule();
+    void ArduinoHighlightingRule();
+    */
 };
 
 #endif // HIGHLIGHTER_H

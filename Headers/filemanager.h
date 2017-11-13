@@ -2,12 +2,16 @@
 #define FILEMANAGER_H
 
 #include <QObject>
+#include <QWidget>
+#include <QFileSystemModel>
+#include <QTreeView>
+#include <QFileIconProvider>
 
-class FileManager : public QObject
+class FileManager : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FileManager(QObject *parent = nullptr);
+    explicit FileManager(QWidget *parent = nullptr);
 
 signals:
 

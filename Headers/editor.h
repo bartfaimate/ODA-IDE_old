@@ -42,6 +42,12 @@ private slots:
     void highlightCurrentLine();
     void updateLineNumberArea(const QRect &, int);
 
+public slots:
+
+signals:
+    void filenameChanged(QString);
+
+
 private:
     QWidget *lineNumberArea;
     QFont *font;

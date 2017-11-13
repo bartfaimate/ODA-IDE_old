@@ -6,6 +6,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>
 
+
 using namespace std;
 
 #define DEBUG 1
@@ -68,6 +69,7 @@ void MainWindow::createLayout()
 
     verticalSplitter = new QSplitter();
     verticalSplitter->setOrientation(Qt::Vertical);
+    horizontalSplitter = new QSplitter(Qt::Horizontal);
 
     menuBar = new QMenuBar();
     toolBar = new QToolBar();
@@ -78,6 +80,10 @@ void MainWindow::createLayout()
     //highlighter = new Highlighter(editor->document());
     console = new Console();
     //tab = new QTabWidget();
+
+    fileManager = new FileManager();
+    horizontalSplitter->addWidget(fileManager);
+    horizontalSplitter->addWidget(verticalSplitter);
     tab =  new Tab();
     verticalSplitter->addWidget(tab);
     verticalSplitter->addWidget(console);
@@ -212,6 +218,7 @@ void MainWindow::setupTabs()
     tab->setMovable(true);
 
     connect(tab, SIGNAL(tabCloseRequested(int)), tab, SLOT(closeTab(int)));
+
 }
 
 void MainWindow::addTab()
@@ -222,7 +229,6 @@ void MainWindow::addTab()
     tab->setCurrentIndex(tab->count() - 1);
 
 #if DEBUG == 1
-
     cout << "tabsnum:" << tab->count()<<endl;
 #endif
 }
@@ -286,7 +292,7 @@ void MainWindow::createFileActions()
  */
 void MainWindow::createEditActions()
 {
-    Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+   // Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
 
     undoAct = new QAction(tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
@@ -387,8 +393,9 @@ void MainWindow::saveAsFile()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save As File"), tr("All files(*)"));
 
-    //editor->setOpenedFileName(filename);     /* set up opened filename */
-    //editor->setFileExtension();
+    if(filename.isEmpty()) {
+        return;
+    }
 
     QFile *file = new QFile(filename);
     try{
@@ -406,6 +413,7 @@ void MainWindow::saveAsFile()
         file->write(currentEditor->toPlainText().toStdString().c_str());
         file->flush();
         file->close();
+        emit(currentEditor->filenameChanged(filename));
 
     }
     catch(...){
@@ -456,6 +464,7 @@ void MainWindow::openFile()
             currentEditor->document()->setPlainText(readFile->readAll());
             file->flush();
             file->close();
+            emit(currentEditor->filenameChanged(filename));
 
         }
         catch (...){
@@ -492,6 +501,9 @@ void MainWindow::newFile()
     cout << "new file" << endl;
 #endif
     QString filename = QFileDialog::getSaveFileName(this, tr("New File"), tr("All files(*)"));
+    if(filename.isEmpty()){
+        return;
+    }
     QFile *file = new QFile(filename);
 
     try{
@@ -510,8 +522,9 @@ void MainWindow::newFile()
         file->close();
         if(!Editor(tab->currentWidget()).document()->isEmpty()){
             addTab();
-            tab->setCurrentIndex(tab->count());
+            tab->setCurrentIndex(tab->count()-1);
         }
+        emit(currentEditor->filenameChanged(filename));
 
 #if DEBUG == 1
         cout << filename.toStdString() << endl;

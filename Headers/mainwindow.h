@@ -13,6 +13,7 @@
 #include "console.h"
 #include "highlighter.h"
 #include "tab.h"
+#include "filemanager.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,9 +33,8 @@ private:
     //Editor *editor;     /* Code editor section */
     Console *console;   /* Console output */
     Highlighter *highlighter; /* Syntax highlighter */
-  //  QTabWidget *tab;    /* manages the tabs */
-
-    Tab* tab;
+    FileManager *fileManager;
+    Tab *tab;
 
     QHBoxLayout *hBoxLayout;
     QSplitter *verticalSplitter;
