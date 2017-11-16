@@ -5,6 +5,10 @@
 #include <QWidget>
 #include <QPlainTextEdit>
 
+/**
+ * @brief The Console class
+ * this class the output console under the Editor widget.
+ */
 class Console :  public QPlainTextEdit
 {
     Q_OBJECT

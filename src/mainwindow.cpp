@@ -28,7 +28,19 @@ MainWindow::MainWindow(QWidget *parent) :
         setupTabs();
     }
 
-    this->setGeometry(50, 50, 800, 600); /* window size and position */
+    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat);
+  // settings->setValue("window/xpos", 50);
+  // settings->setValue("window/ypos", 50);
+  // settings->setValue("window/width", 800);
+  // settings->setValue("window/height", 600);
+
+    int x = settings.value("window/xpos").toInt();
+    int y = settings.value("window/ypos").toInt();
+    int width = settings.value("window/width").toInt();
+    int height = settings.value("window/height").toInt();
+
+    /* window size and position */
+    this->setGeometry(x, y+24, width, height); /* window size and position */
     this->setWindowTitle(tr("ODA-IDE")); /* setup title */
     createStatusbar(20);
 
@@ -49,6 +61,15 @@ MainWindow::MainWindow(QWidget *parent) :
  */
 MainWindow::~MainWindow()
 {
+
+    delete this->tab;
+    delete this->menuBar;
+    delete this->console;
+    delete this->statusBar();
+
+    saveGeometry();
+    saveSettings();
+
     delete this;
 }
 
@@ -81,6 +102,7 @@ void MainWindow::createLayout()
     console = new Console();
     //tab = new QTabWidget();
 
+   //TODO: this is not working yet
     fileManager = new FileManager();
     horizontalSplitter->addWidget(fileManager);
     horizontalSplitter->addWidget(verticalSplitter);
@@ -231,6 +253,34 @@ void MainWindow::addTab()
 #if DEBUG == 1
     cout << "tabsnum:" << tab->count()<<endl;
 #endif
+}
+
+void MainWindow::saveGeometry()
+{
+    qDebug() << "savegeometry\n";
+}
+
+/**
+ * @brief MainWindow::saveSettings
+ */
+void MainWindow::saveSettings()
+{
+    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat);
+    settings.setValue("window/xpos", this->x());
+    settings.setValue("window/ypos", this->y());
+    settings.setValue("window/width", this->width());
+    settings.setValue("window/height", this->height());
+
+    qDebug() << this->x();
+
+}
+
+/**
+ * @brief MainWindow::loadSettings
+ */
+void MainWindow::loadSettings()
+{
+
 }
 
 /**

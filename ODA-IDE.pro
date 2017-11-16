@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-#QT       += testlib
+QT       += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -42,6 +42,7 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tab.cpp \
+    src/test.cpp \
 
 
 HEADERS += \
@@ -55,3 +56,4 @@ HEADERS += \
 
 DISTFILES +=
 
+CONFIG += testcase

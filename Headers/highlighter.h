@@ -52,12 +52,12 @@ private:
     QTextCharFormat functionFormat;
 
 public slots:
-   /* void CHighlightingRule();
-    void CppHighlightingRule();
-    void PythonHighlightingRule();
-    void JavaHighlightingRule();
-    void ArduinoHighlightingRule();
-    */
+    void CHighlightingRule();
+   //void CppHighlightingRule();
+   //void PythonHighlightingRule();
+   //void JavaHighlightingRule();
+   //void ArduinoHighlightingRule();
+
 };
 
 #endif // HIGHLIGHTER_H

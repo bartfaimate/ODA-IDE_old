@@ -9,6 +9,9 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSplitter>
+#include <QDebug>
+#include <QSettings>
+
 #include "editor.h"
 #include "console.h"
 #include "highlighter.h"
@@ -28,6 +31,10 @@ public:
     ~MainWindow();
 
 private:
+
+    QString companyName = "OI";
+    QString appName = "ODA-IDE";
+
     Ui::MainWindow *window;
 
     //Editor *editor;     /* Code editor section */
@@ -104,6 +111,7 @@ private:
 
 
 
+
 public slots:
     void newWindow();
     void newFile();
@@ -111,6 +119,9 @@ public slots:
     void saveAsFile();
     void openFile();
     void addTab();
+    void saveGeometry();
+    void saveSettings();
+    void loadSettings();
 
 };
 

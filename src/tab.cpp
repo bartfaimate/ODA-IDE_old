@@ -5,6 +5,7 @@
 void Tab::closeTab(int index)
 {
     removeTab(index);
+
 }
 
 void Tab::undo()

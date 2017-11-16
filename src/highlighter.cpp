@@ -93,3 +93,8 @@ void Highlighter::highlightBlock(const QString &text)
         startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
     }
 }
+
+void Highlighter::CHighlightingRule()
+{
+
+}
