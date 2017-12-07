@@ -7,9 +7,10 @@ This is a simply IDE for C and C++ development.
 Necessary to have qmake4 or qmake5
 ```bash
 cd /desired/path/
-mkdir ODA-IDE
-git pull https://github.com/bartfaimate/ODA-IDE
-qmake ODA-IDE.pro
+git clone https://github.com/bartfaimate/ODA-IDE
+mkdir build
+cd build
+qmake ../ODA-IDE.pro
 make
 ```
 

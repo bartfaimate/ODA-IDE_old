@@ -35,6 +35,9 @@ private:
     QString companyName = "OI";
     QString appName = "ODA-IDE";
 
+
+    QList<QString> *openedFiles;
+
     Ui::MainWindow *window;
 
     //Editor *editor;     /* Code editor section */
@@ -53,9 +56,26 @@ private:
     QPushButton *newFileButton;
     QPushButton *newTabButton;
     QPushButton *saveButton;
+    QPushButton *undoButton;
     QPushButton *newWindowButton;
     QPushButton *compileButton;
     QPushButton *runButton;
+
+    /* icons */
+    QIcon *newTabIcon = new QIcon("./img/gnome-icons/add.svg");
+    QIcon *newFileIcon = new QIcon("./img/gnome-icons/document-new.svg");
+    QIcon *saveIcon = new QIcon("./img/gnome-icons/document-save.png");
+    QIcon *saveAsIcon = new QIcon("./img/gnome-icons/document-save-as.png");
+    QIcon *openIcon = new QIcon("./img/gnome-icons/document-open.svg");
+
+    QIcon *buildIcon = new QIcon("./img/gnome-icons/build.png");
+    QIcon *runIcon = new QIcon("./img/gnome-icons/run.png");
+
+    QIcon *undoIcon = new QIcon("./img/gnome-icons/edit-undo.svg");
+    QIcon *redoIcon = new QIcon("./img/gnome-icons/edit-redo.svg");
+    QIcon *copyIcon = new QIcon("./img/gnome-icons/edit-copy.png");
+    QIcon *pasteIcon = new QIcon("./img/gnome-icons/edit-paste.png");
+    QIcon *cutIcon = new QIcon("./img/gnome-icons/edit-cut.png");
 
     /* menus */
     QMenu *fileMenu;
@@ -66,11 +86,9 @@ private:
     QAction *newWindowAct;
     QAction *newTabAct;
     QAction *newFileAct;
-
     QAction *openFileAct;
     QAction *saveFileAct;
     QAction *saveFileAsAct;
-
     QAction *printAct;
     QAction *exitAct;
     /*edit menu*/
@@ -101,16 +119,12 @@ private:
 
     void setupTabs();
 
-
     void createActions();
     void createFileActions();
     void createEditActions();
     void createCompileActions();
     void createHelpActions();
     void createStatusbar(int height);
-
-
-
 
 public slots:
     void newWindow();

@@ -5,7 +5,8 @@
 #include <QTextStream>
 #include <QErrorMessage>
 #include <QFileDialog>
-
+#include <QScreen>
+#include <QGuiApplication>
 
 using namespace std;
 
@@ -14,26 +15,24 @@ using namespace std;
 /**
  * @brief MainWindow::MainWindow
  * @param parent
+ * constructor. Sets up window layout, creats buttons, menus, tabwidget
+ * creates buttons and add actions and opens window in the last opened size
  */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)//,
     //window(new Ui::MainWindow)
 {
 
-    createLayout();
-    createActions();
-    createMenus();
-    createButtons();
+    createLayout();     /* crete layout, positions items, splitter */
+    createActions();    /* create actions for the buttons */
+    createMenus();      /* create menus  */
+    createButtons();    /* create buttons */
     if (tab != NULL){
         setupTabs();
     }
 
-    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat);
-  // settings->setValue("window/xpos", 50);
-  // settings->setValue("window/ypos", 50);
-  // settings->setValue("window/width", 800);
-  // settings->setValue("window/height", 600);
-
+    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat); /* load settings */
+    /* setup window position and size */
     int x = settings.value("window/xpos").toInt();
     int y = settings.value("window/ypos").toInt();
     int width = settings.value("window/width").toInt();
@@ -44,10 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(tr("ODA-IDE")); /* setup title */
     createStatusbar(20);
 
+    /* setup window icon */
     QIcon *windowIcon = new QIcon("./img/icon.png");
     this->setWindowIcon(*windowIcon);
-
-
 
     this->console->setup();
 #if DEBUG == 1
@@ -58,15 +56,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 /**
  * @brief MainWindow::~MainWindow
+ * destructor
  */
 MainWindow::~MainWindow()
 {
-
-    delete this->tab;
-    delete this->menuBar;
-    delete this->console;
-    delete this->statusBar();
-
     saveGeometry();
     saveSettings();
 
@@ -74,7 +67,24 @@ MainWindow::~MainWindow()
 }
 
 /**
+ * @brief MainWindow::addTab
+ * add a new tab with editor and setup the current tab index
+ */
+void MainWindow::addTab()
+{
+    Editor *tabeditor = new Editor();   /* new editor in tab */
+    Highlighter *tabhighlighter = new Highlighter(tabeditor->document());   /* setup synta highlight */
+    this->tab->addTab(tabeditor, tr("(new)"));      /* setup tab title */
+    tab->setCurrentIndex(tab->count() - 1);         /* set current index, make it active */
+
+#if DEBUG == 1
+    cout << "tabsnum:" << tab->count()<<endl;
+#endif
+}
+
+/**
  * @brief MainWindow::createLayout
+ * Creates layout with tabwidget, output console, splitter. Editor is in separated tabs
  */
 void MainWindow::createLayout()
 {
@@ -88,17 +98,16 @@ void MainWindow::createLayout()
 
     hBoxLayout = new QHBoxLayout(); /* horizontal layout */
 
-    verticalSplitter = new QSplitter();
+    verticalSplitter = new QSplitter(); /* vertical splitter for the file system view */
     verticalSplitter->setOrientation(Qt::Vertical);
-    horizontalSplitter = new QSplitter(Qt::Horizontal);
+    horizontalSplitter = new QSplitter(Qt::Horizontal); /* horizontal splitter for the debug console and text editor */
 
     menuBar = new QMenuBar();
     toolBar = new QToolBar();
 
-    menuBar = new QMenuBar(topFiller);
-    toolBar = new QToolBar(topFiller);
-   // editor = new Editor();
-    //highlighter = new Highlighter(editor->document());
+    menuBar = new QMenuBar(topFiller);  /* menubar to the top */
+    toolBar = new QToolBar(topFiller);  /* toolbar to the top, under menubar */
+
     console = new Console();
     //tab = new QTabWidget();
 
@@ -106,9 +115,9 @@ void MainWindow::createLayout()
     fileManager = new FileManager();
     horizontalSplitter->addWidget(fileManager);
     horizontalSplitter->addWidget(verticalSplitter);
-    tab =  new Tab();
+    tab =  new Tab();       /* tab widget to the splitter */
     verticalSplitter->addWidget(tab);
-    verticalSplitter->addWidget(console);
+    verticalSplitter->addWidget(console);   /* console under the tab */
 
 //most jó a file menü gomb, viszont splitter nem
     QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
@@ -120,13 +129,9 @@ void MainWindow::createLayout()
  //   vBoxLayout->addWidget(tab);
 
     mainWidget->setLayout(vBoxLayout);
-
     hBoxLayout->addWidget(toolBar);
-
     this->setLayout(hBoxLayout);
-
-    /* add the first tab with editor */
-    this->addTab();
+    this->addTab();      /* add the first tab with editor */
 
 }
 
@@ -197,30 +202,31 @@ void MainWindow::createHelpMenu()
     helpMenu->addAction(aboutQtAct);
 }
 
+/**
+ * @brief MainWindow::createButtons
+ * creates buttons for the toolbar
+ */
 void MainWindow::createButtons()
 {
-    QIcon *newWindowIcon = new QIcon("./img/icons/new_window.png");
-    QIcon *newTabIcon = new QIcon("./img/icons/new_tab.png");
-    QIcon *newFileIcon = new QIcon("./img/icons/new_file.png");
-    QIcon *saveIcon = new QIcon("./img/icons/save.png");
-    QIcon *buildIcon = new QIcon("./img/icons/build.png");
-    QIcon *runIcon = new QIcon("./img/icons/run.png");
-
-    newWindowButton = new QPushButton(*newWindowIcon, tr(""));
-    toolBar->addWidget(newWindowButton);
-    connect(newWindowButton, SIGNAL(clicked(bool)), this, SLOT(newWindow()));
-
-    newTabButton= new QPushButton(*newTabIcon, tr(""));
+    /*NEW TAB*/
+    newTabButton = new QPushButton(*newTabIcon, tr(""));
     toolBar->addWidget(newTabButton);
     connect(newTabButton, SIGNAL(clicked(bool)), this, SLOT(addTab()));
 
+    /* NEW FILE*/
     newFileButton = new QPushButton(*newFileIcon, tr(""));
     toolBar->addWidget(newFileButton);
     connect(newFileButton, SIGNAL(clicked(bool)), this, SLOT(newFile()));
 
+    /*SAVE*/
     saveButton = new QPushButton(*saveIcon, tr(""));
     toolBar->addWidget(saveButton);
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
+
+    /* UNDO */
+    undoButton = new QPushButton(*undoIcon, tr(""));
+    toolBar->addWidget(undoButton);
+    connect(undoButton, SIGNAL(clicked(bool)), tab, SLOT(undo()));
 
 
     compileButton = new QPushButton(*buildIcon, tr(""));
@@ -228,58 +234,6 @@ void MainWindow::createButtons()
 
     runButton = new QPushButton(*runIcon, tr(""));
     toolBar->addWidget(runButton);
-
-}
-
-/**
- * @brief MainWindow::setupTabs
- */
-void MainWindow::setupTabs()
-{
-    tab->setTabsClosable(true);
-    tab->setMovable(true);
-
-    connect(tab, SIGNAL(tabCloseRequested(int)), tab, SLOT(closeTab(int)));
-
-}
-
-void MainWindow::addTab()
-{
-    Editor *tabeditor = new Editor();
-    Highlighter *tabhighlighter = new Highlighter(tabeditor->document());
-    this->tab->addTab(tabeditor, tr("(new)"));
-    tab->setCurrentIndex(tab->count() - 1);
-
-#if DEBUG == 1
-    cout << "tabsnum:" << tab->count()<<endl;
-#endif
-}
-
-void MainWindow::saveGeometry()
-{
-    qDebug() << "savegeometry\n";
-}
-
-/**
- * @brief MainWindow::saveSettings
- */
-void MainWindow::saveSettings()
-{
-    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat);
-    settings.setValue("window/xpos", this->x());
-    settings.setValue("window/ypos", this->y());
-    settings.setValue("window/width", this->width());
-    settings.setValue("window/height", this->height());
-
-    qDebug() << this->x();
-
-}
-
-/**
- * @brief MainWindow::loadSettings
- */
-void MainWindow::loadSettings()
-{
 
 }
 
@@ -306,26 +260,26 @@ void MainWindow::createFileActions()
     newWindowAct->setStatusTip(tr("Create a new window"));
     connect(newWindowAct, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
 
-    newTabAct = new QAction(tr("New &Tab"), this);
+    newTabAct = new QAction(*newTabIcon, tr("New &Tab"), this);
     newTabAct->setShortcuts(QKeySequence::AddTab);
     newTabAct->setStatusTip(tr("Create new tab"));
     connect(newTabAct, SIGNAL(triggered(bool)), this, SLOT(addTab()));
 
-    newFileAct = new QAction(tr("New F&ile"), this);
+    newFileAct = new QAction(*newFileIcon, tr("New F&ile"), this);
     newFileAct->setStatusTip(tr("Create new File"));
     connect(newFileAct, SIGNAL(triggered(bool)), this, SLOT(newFile()));
 
-    openFileAct = new QAction(tr("&Open File"), this);
+    openFileAct = new QAction(*openIcon, tr("&Open File"), this);
     openFileAct->setShortcut(QKeySequence::Open);
     openFileAct->setStatusTip(tr("Open existing File"));
     connect(openFileAct, SIGNAL(triggered(bool)), this, SLOT(openFile()));
 
-    saveFileAct = new QAction(tr("&Save"), this);
+    saveFileAct = new QAction(*saveIcon, tr("&Save"), this);
     saveFileAct->setShortcut(QKeySequence::Save);
     saveFileAct->setStatusTip(tr("Save a file"));
     connect(saveFileAct, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
 
-    saveFileAsAct = new QAction(tr("Save as"), this);
+    saveFileAsAct = new QAction(*saveAsIcon, tr("Save as"), this);
     saveFileAsAct->setShortcut(QKeySequence::SaveAs);
     saveFileAsAct->setStatusTip(tr("Save as file"));
     connect(saveFileAsAct, SIGNAL(triggered(bool)), this, SLOT(saveAsFile()));
@@ -344,23 +298,23 @@ void MainWindow::createEditActions()
 {
    // Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
 
-    undoAct = new QAction(tr("Undo"), this);
+    undoAct = new QAction(*undoIcon, tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
     connect(undoAct, SIGNAL(triggered(bool)), tab, SLOT(undo()));
 
-    redoAct = new QAction(tr("Redo"), this);
+    redoAct = new QAction(*redoIcon, tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
     connect(redoAct, SIGNAL(triggered(bool)), tab, SLOT(redo()));
 
-    copyAct = new QAction(tr("Copy"), this);
+    copyAct = new QAction(*copyIcon, tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
     connect(copyAct, SIGNAL(triggered(bool)), tab, SLOT(copy()));
 
-    cutAct = new QAction(tr("Cut"), this);
+    cutAct = new QAction(*cutIcon, tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
     connect(cutAct, SIGNAL(triggered(bool)), tab, SLOT(cut()));
 
-    pasteAct = new QAction(tr("Paste"), this);
+    pasteAct = new QAction(*pasteIcon, tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
     connect(pasteAct, SIGNAL(triggered(bool)), tab, SLOT(paste()));
 }
@@ -403,80 +357,10 @@ void MainWindow::createStatusbar(int height)
 }
 
 /**
- * @brief MainWindow::saveFile
+ * @brief MainWindow::loadSettings
  */
-void MainWindow::saveFile()
+void MainWindow::loadSettings()
 {
-    Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
-    QString filename = currentEditor->getOpenedFileName();
-    QFile *file = new QFile(filename);
-    try{
-        if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
-            QErrorMessage *fileError = new QErrorMessage();
-            fileError->showMessage(tr("ERROR by saving"));
-            return;
-        }
-       // while(file->readLine() != EOF)
-
-
-        file->write(currentEditor->toPlainText().toStdString().c_str());
-        file->flush();
-        file->close();
-    }
-    catch(...){
-        QErrorMessage *fileError = new QErrorMessage();
-        fileError->showMessage(tr("ERROR by saving"));
-        try{
-            file->close();
-        }
-        catch(...){
-            cout << "[SAVE:] file close error" << endl;
-        }
-    }
-}
-
-/**
- * @brief MainWindow::saveAsFile
- * creates a new file and saves the content of the editor
- */
-void MainWindow::saveAsFile()
-{
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save As File"), tr("All files(*)"));
-
-    if(filename.isEmpty()) {
-        return;
-    }
-
-    QFile *file = new QFile(filename);
-    try{
-        if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
-            QErrorMessage *fileError = new QErrorMessage();
-            fileError->showMessage(tr("ERROR by saving"));
-            return;
-        }
-        Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
-        currentEditor->setFileNameAndExtension(filename);
-        QString info = ">> " + filename + " saved\n";
-        console->appendPlainText(info);
-        statusBar()->showMessage(currentEditor->getFileExtension());
-
-        file->write(currentEditor->toPlainText().toStdString().c_str());
-        file->flush();
-        file->close();
-        emit(currentEditor->filenameChanged(filename));
-
-    }
-    catch(...){
-        QErrorMessage *fileError = new QErrorMessage();
-        fileError->showMessage(tr("ERROR by saving"));
-        try{
-            file->close();
-        }
-        catch(...){
-            cout << "[SAVE AS:] file close error" << endl;
-            this->console->appendDebuginfo("[SAVE AS:] file close error");
-        }
-    }
 
 }
 
@@ -593,5 +477,150 @@ void MainWindow::newFile()
             console->appendDebuginfo("[NEWFILE]: error closing file");
         }
     }
+
+}
+
+/**
+ * @brief MainWindow::saveAsFile
+ * creates a new file and saves the content of the editor
+ */
+void MainWindow::saveAsFile()
+{
+    /* filename to be saved */
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save As File"), tr("All files(*)"));
+
+    if(filename.isEmpty()) {
+        return;
+    }
+
+    /* file object */
+    QFile *file = new QFile(filename);
+    try{
+        if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
+            QErrorMessage *fileError = new QErrorMessage();
+            fileError->showMessage(tr("ERROR by saving"));
+            return;
+        }
+        /* cast the curent tab to Editor */
+        Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+        currentEditor->setFileNameAndExtension(filename);   /* editor filename and filetype setup */
+        QString info = ">> " + filename + " saved\n";
+        console->appendPlainText(info);                     /* print the file name in the console */
+        statusBar()->showMessage(currentEditor->getFileExtension());    /* show the file extension in the statusbar */
+
+        file->write(currentEditor->toPlainText().toStdString().c_str()); /* write text to the file */
+        file->flush();
+        file->close();
+        emit(currentEditor->filenameChanged(filename));
+
+    }
+    catch(...){
+        QErrorMessage *fileError = new QErrorMessage();
+        fileError->showMessage(tr("ERROR by saving"));
+        try{
+            file->close();
+        }
+        catch(...){
+            cout << "[SAVE AS:] file close error" << endl;
+            this->console->appendDebuginfo("[SAVE AS:] file close error");
+        }
+    }
+
+}
+
+/**
+ * @brief MainWindow::saveFile
+ */
+void MainWindow::saveFile()
+{
+    /* cast current widget to editor */
+    Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+    QString filename = currentEditor->getOpenedFileName();
+
+    /* if filename is empty save as file else just save file */
+    if(filename.isEmpty()){
+        this->saveAsFile();
+    }
+    else{
+        QFile *file = new QFile(filename);
+        try{
+            if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
+                QErrorMessage *fileError = new QErrorMessage();
+                fileError->showMessage(tr("ERROR by saving"));
+                return;
+            }
+           // while(file->readLine() != EOF)
+
+            file->write(currentEditor->toPlainText().toStdString().c_str());
+            file->flush();
+            file->close();
+        }
+        catch(...){
+            QErrorMessage *fileError = new QErrorMessage();
+            fileError->showMessage(tr("ERROR by saving"));
+            try{
+                file->close();
+            }
+            catch(...){
+                cout << "[SAVE:] file close error" << endl;
+            }
+        }
+    }
+}
+
+/**
+ * @brief MainWindow::saveGeometry
+ */
+void MainWindow::saveGeometry()
+{
+    qDebug() << "savegeometry\n";
+}
+
+/**
+ * @brief MainWindow::saveSettings
+ */
+void MainWindow::saveSettings()
+{
+    //TODO: ezt befejezni
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    QSettings settings(QString("configs/config.ini"), QSettings::IniFormat);
+    bool isFullSize = false;
+    int xpos = this->x();
+    int ypos = this->y();
+    int height = this->height();
+    int width = this->width();
+    int screenHeight = screenGeometry.height();
+    int screenWidth = screenGeometry.width();
+
+    settings.setValue("window/xpos", xpos);
+    settings.setValue("window/ypos", ypos);
+    settings.setValue("window/height", height);
+    settings.setValue("window/width", width);
+    settings.setValue("window/mode", isFullSize);
+    settings.setValue("theme", "default.css");
+
+    settings.setValue("screen/height", screenHeight);
+    settings.setValue("screen/width", screenWidth);
+
+
+    qDebug() << "height:" << height;
+    qDebug() << "width:" << width;
+    qDebug() << "screen height:" << screenHeight;
+    qDebug() << "screen width:" << screenWidth;
+
+    delete screen;
+
+}
+
+/**
+ * @brief MainWindow::setupTabs
+ */
+void MainWindow::setupTabs()
+{
+    tab->setTabsClosable(true);
+    tab->setMovable(true);
+
+    connect(tab, SIGNAL(tabCloseRequested(int)), tab, SLOT(closeTab(int)));
 
 }
