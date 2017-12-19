@@ -8,6 +8,8 @@
 #include <QScreen>
 #include <QGuiApplication>
 
+#include <thread>
+
 using namespace std;
 
 #define DEBUG 1
@@ -212,29 +214,33 @@ void MainWindow::createButtons()
     newTabButton = new QPushButton(*newTabIcon, tr(""));
     toolBar->addWidget(newTabButton);
     connect(newTabButton, SIGNAL(clicked(bool)), this, SLOT(addTab()));
+    newTabButton->setToolTip(tr("New tab"));
 
     /* NEW FILE*/
     newFileButton = new QPushButton(*newFileIcon, tr(""));
     toolBar->addWidget(newFileButton);
     connect(newFileButton, SIGNAL(clicked(bool)), this, SLOT(newFile()));
+    newFileButton->setToolTip(tr("Create new file"));
 
     /*SAVE*/
     saveButton = new QPushButton(*saveIcon, tr(""));
     toolBar->addWidget(saveButton);
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveFile()));
+    saveButton->setToolTip(tr("Save current file"));
 
     /* UNDO */
     undoButton = new QPushButton(*undoIcon, tr(""));
     toolBar->addWidget(undoButton);
     connect(undoButton, SIGNAL(clicked(bool)), tab, SLOT(undo()));
-
+    undoButton->setToolTip(tr("Undo"));
 
     compileButton = new QPushButton(*buildIcon, tr(""));
     toolBar->addWidget(compileButton);
+    compileButton->setToolTip(tr("Compile"));
 
     runButton = new QPushButton(*runIcon, tr(""));
     toolBar->addWidget(runButton);
-
+    runButton->setToolTip(tr("Run"));
 }
 
 /**
@@ -285,7 +291,7 @@ void MainWindow::createFileActions()
     connect(saveFileAsAct, SIGNAL(triggered(bool)), this, SLOT(saveAsFile()));
 
     exitAct = new QAction(tr("Exit"), this);
-    exitAct->setShortcut(QKeySequence::Close);
+    exitAct->setShortcut(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Close current window"));
     connect(exitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
 }
@@ -399,6 +405,7 @@ void MainWindow::openFile()
             file->flush();
             file->close();
             emit(currentEditor->filenameChanged(filename));
+            tab->setTabText(tab->currentIndex(), currentEditor->getShortFileName());
 
         }
         catch (...){
@@ -415,13 +422,14 @@ void MainWindow::openFile()
     }
 }
 
+
 /**
  * @brief MainWindow::newWindow
  * creates new window
  */
 void MainWindow::newWindow()
 {
-    newWindows = new MainWindow(this);
+    newWindows = new MainWindow();
     newWindows->show();
 }
 

@@ -28,11 +28,11 @@ public:
     void setFontSettings();
     void setFontSettings(QString fontFaimily, int tabwidth);
     void setFileExtension();
-    QString getFileExtension();
-
-    QString getOpenedFileName();
     void setOpenedFileName(QString openedFilename);
     void setFileNameAndExtension(QString openedFileName);
+    QString getFileExtension();
+    QString getOpenedFileName();
+    QString getShortFileName();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

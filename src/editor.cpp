@@ -94,11 +94,30 @@ QString Editor::getFileExtension()
 
 /**
  * @brief Editor::getOpenedFileName
- * @return
+ * @return the filename the actual editor
  */
 QString Editor::getOpenedFileName()
 {
     return this->openedFileName;
+}
+
+/**
+ * @brief Editor::getShortFileName
+ * @return
+ */
+QString Editor::getShortFileName()
+{
+    QString pattern = "((\\w)+(\\.)?(\\w)+)$";   //ok but filename with 2 dots not working
+    QRegularExpression regEx(pattern);
+    QRegularExpressionMatch match = regEx.match(this->openedFileName);
+    QString matched;
+    if (match.hasMatch()) {
+        matched = match.captured(1);    //
+    }
+    else {
+        matched = " ";
+    }
+    return matched;
 }
 
 /**
