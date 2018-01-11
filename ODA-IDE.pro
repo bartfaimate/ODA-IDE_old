@@ -33,6 +33,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # run
 # syntax highlight
 
+TEST = 1
 
 SOURCES += \
     src/console.cpp \
@@ -42,8 +43,8 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tab.cpp \
-    src/test.cpp \
-
+    src/test.cpp
+  #  src/test/testeditor.cpp \
 
 HEADERS += \
     Headers/console.h \
@@ -51,9 +52,12 @@ HEADERS += \
     Headers/filemanager.h \
     Headers/highlighter.h \
     Headers/mainwindow.h \
-    Headers/tab.h \
+    Headers/tab.h
+    #Headers/testeditor.h \
 
 
 DISTFILES +=
 
 CONFIG += testcase
+
+

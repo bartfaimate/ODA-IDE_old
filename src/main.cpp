@@ -2,9 +2,15 @@
 #include <QApplication>
 #include <QErrorMessage>
 
+#define TEST 0
+#if TEST == 1
+#include <QtTest/QTest>
+#include "src/test.cpp"
+#endif
 
 int main(int argc, char *argv[])
 {
+#if TEST != 1
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
@@ -27,4 +33,8 @@ int main(int argc, char *argv[])
 
 
     return a.exec();
+#endif
+#if TEST == 1
+
+#endif
 }

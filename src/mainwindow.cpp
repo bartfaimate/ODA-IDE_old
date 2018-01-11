@@ -391,7 +391,9 @@ void MainWindow::openFile()
 
             /* cast QWidget to Editor */
             Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+            Highlighter *currentHighlighter = new Highlighter(currentEditor->document());
             currentEditor->setFileNameAndExtension(filename);
+            currentHighlighter->setupRule(currentEditor->getFileExtension());
 
             QString info = ">> " + filename + " opened\n";
             console->appendPlainText(info);
@@ -512,6 +514,9 @@ void MainWindow::saveAsFile()
         /* cast the curent tab to Editor */
         Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
         currentEditor->setFileNameAndExtension(filename);   /* editor filename and filetype setup */
+        Highlighter *currentHighlighter = new Highlighter(currentEditor->document());
+        currentHighlighter->setupRule(currentEditor->getFileExtension());
+
         QString info = ">> " + filename + " saved\n";
         console->appendPlainText(info);                     /* print the file name in the console */
         statusBar()->showMessage(currentEditor->getFileExtension());    /* show the file extension in the statusbar */
@@ -520,6 +525,7 @@ void MainWindow::saveAsFile()
         file->flush();
         file->close();
         emit(currentEditor->filenameChanged(filename));
+        tab->setTabText(tab->currentIndex(), currentEditor->getShortFileName());
 
     }
     catch(...){

@@ -52,7 +52,14 @@ private:
     QTextCharFormat functionFormat;
 
 public slots:
-    void CHighlightingRule();
+    void CRule();
+    void CPPRule();
+    void deleteRule();
+    void PythonRule();
+    void JavaRule();
+    void MakeRule();
+    void setupRule();
+    void setupRule(QString extension);
    //void CppHighlightingRule();
    //void PythonHighlightingRule();
    //void JavaHighlightingRule();
