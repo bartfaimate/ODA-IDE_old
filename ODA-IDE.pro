@@ -43,7 +43,8 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tab.cpp \
-    src/test.cpp
+    src/test.cpp \
+    src/settings.cpp
   #  src/test/testeditor.cpp \
 
 HEADERS += \
@@ -52,7 +53,8 @@ HEADERS += \
     Headers/filemanager.h \
     Headers/highlighter.h \
     Headers/mainwindow.h \
-    Headers/tab.h
+    Headers/tab.h \
+    Headers/settings.h
     #Headers/testeditor.h \
 
 

@@ -338,6 +338,8 @@ void MainWindow::createCompileActions()
     makeAct = new QAction(tr("Make"), this);
 
     buildSettingsAct = new QAction(tr("Build Settings"), this);
+    buildSettingsAct->setStatusTip(tr("Open settings window"));
+    connect(buildSettingsAct, SIGNAL(triggered(bool)), this, SLOT(openSettingsWindow()));
 }
 
 /**
@@ -367,7 +369,16 @@ void MainWindow::createStatusbar(int height)
  */
 void MainWindow::loadSettings()
 {
+    /*TODO: finish this*/
+}
 
+/**
+ * @brief MainWindow::openSettingsWindow
+ */
+void MainWindow::openSettingsWindow()
+{
+    Settings *settings = new Settings();
+    settings->show();
 }
 
 /**
@@ -487,7 +498,6 @@ void MainWindow::newFile()
             console->appendDebuginfo("[NEWFILE]: error closing file");
         }
     }
-
 }
 
 /**
@@ -539,7 +549,6 @@ void MainWindow::saveAsFile()
             this->console->appendDebuginfo("[SAVE AS:] file close error");
         }
     }
-
 }
 
 /**

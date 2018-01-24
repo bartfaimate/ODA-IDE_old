@@ -46,17 +46,22 @@ private:
 
     QTextCharFormat keywordFormat;
     QTextCharFormat classFormat;
+    QTextCharFormat macroFormat;
     QTextCharFormat singleLineCommentFormat;
     QTextCharFormat multiLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
 
 public slots:
-    void CRule();
-    void CPPRule();
+//    void CRule();
+    void CRule(QString keywordColor, QString macroColor, QString commentColor, QString stringColor, QString functionColor);
+//    void CPPRule();
+    void CPPRule(QString keywordColor, QString macroColor, QString commentColor, QString classColor, QString stringColor, QString functionColor);
     void deleteRule();
-    void PythonRule();
-    void JavaRule();
+    void PythonRule(QString keywordColor, QString classColor, QString commentColor, QString stringColor, QString functionColor);
+//    void PythonRule();
+    void JavaRule(QString keywordColor, QString classColor, QString commentColor, QString stringColor, QString functionColor);
+//  void JavaRule();
     void MakeRule();
     void setupRule();
     void setupRule(QString extension);

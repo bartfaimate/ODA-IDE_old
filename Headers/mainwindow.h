@@ -17,6 +17,7 @@
 #include "highlighter.h"
 #include "tab.h"
 #include "filemanager.h"
+#include "settings.h"
 
 namespace Ui {
 class MainWindow;
@@ -136,6 +137,7 @@ public slots:
     void saveGeometry();
     void saveSettings();
     void loadSettings();
+    void openSettingsWindow();
 
 };
 
