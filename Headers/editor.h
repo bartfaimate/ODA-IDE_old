@@ -26,6 +26,7 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
     void setFontSettings();
+    void setFontSettings(QString fontFamily, int fontSize, int tabWidth);
     void setFontSettings(QString fontFaimily, int tabwidth);
     void setFileExtension();
     void setOpenedFileName(QString openedFilename);
@@ -40,6 +41,8 @@ protected:
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
+    void highlightCurrentLine(QString highlightColor, int lighten);
+    void highlightCurrentLineWrapper();
     void updateLineNumberArea(const QRect &, int);
 
 public slots:
@@ -54,7 +57,24 @@ private:
     QFontMetrics *metrics;
     QString openedFileName;
     QString fileExtension;
+    QString highlightColor;
+    QString fontFamily;
     int tabWidth;
+    int fontSize;
+    int lightenValue;
+
+
+public:
+    int getLightenValue();
+    void setLightenValue(int lighten);
+    QString getHighlightColor();
+    void setHighlightColor(QString color);
+    void setFontFamily(QString fontFamily);
+    QString getFontFamily();
+    void setTabWidth(int tabWidth);
+    int getTabWidth();
+    void setFontSize(int fontSize);
+    int getFontSize();
 };
 
 //![codeeditordefinition]

@@ -367,7 +367,7 @@ void Highlighter::deleteRule()
  * @param stringColor
  * @param functionColor
  */
-void Highlighter::PythonRule(QString keywordColor ="darkblue", QString classColor = "magenta", QString commentColor = "red", QString stringColor ="darkcyan", QString functionColor ="blue")
+void Highlighter::PythonRule(QString keywordColor = "darkblue", QString classColor = "magenta", QString commentColor = "red", QString stringColor ="darkcyan", QString functionColor ="blue")
 {
     QColor color(keywordColor);
     QBrush brush(color);

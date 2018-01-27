@@ -10,11 +10,12 @@ Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
+    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLineWrapper()));
 
     updateLineNumberAreaWidth(0);
-    highlightCurrentLine();
-    setFontSettings();
+    highlightCurrentLineWrapper();
+    setFontSettings("Courier", 12, 4);
+   // this->setStyleSheet("background-color: gray");
 }
 
 //![constructor]
@@ -55,12 +56,26 @@ void Editor::setFontSettings()
     this->setTabStopWidth(tabStop * metrics->width(" "));
 }
 
+void Editor::setFontSettings(QString fontFamily, int fontSize, int tabWidth = 4)
+{
+    font = new QFont();
+    font->setFamily(fontFamily);
+    font->setStyleHint(QFont::Monospace);
+    font->setFixedPitch(true);
+    font->setPointSize(fontSize);
+    this->setFont(*font);
+
+    metrics = new QFontMetrics(*font);
+    this->setTabStopWidth(tabWidth * metrics->width(" "));
+}
+
+
 /**
  * @brief Editor::setFontSettings
  * @param fontFaimily
  * @param tabwidth
  */
-void Editor::setFontSettings(QString fontFaimily, int tabwidth)
+void Editor::setFontSettings(QString fontFaimily, int tabwidth = 4)
 {
     font = new QFont();
     font->setFamily(fontFaimily);
@@ -159,6 +174,96 @@ void Editor::updateLineNumberArea(const QRect &rect, int dy)
         updateLineNumberAreaWidth(0);
 }
 
+/**
+ * @brief Editor::getLightenValue
+ * @return
+ */
+int Editor::getLightenValue()
+{
+    return this->lightenValue;
+}
+
+/**
+ * @brief Editor::setLightenValue
+ * @param lighten
+ */
+void Editor::setLightenValue(int lighten)
+{
+    this->lightenValue = lighten;
+}
+
+/**
+ * @brief Editor::getHighlightColor
+ * @return
+ */
+QString Editor::getHighlightColor()
+{
+    return this->highlightColor;
+}
+
+/**
+ * @brief Editor::setHighlightColor
+ * @param color
+ */
+void Editor::setHighlightColor(QString color)
+{
+    this->highlightColor = color;
+}
+
+/**
+ * @brief Editor::setFontFamily
+ * @param fontFamily
+ */
+void Editor::setFontFamily(QString fontFamily)
+{
+    this->fontFamily = fontFamily;
+}
+
+/**
+ * @brief Editor::getFontFamily
+ * @return
+ */
+QString Editor::getFontFamily()
+{
+    return this->fontFamily;
+}
+
+/**
+ * @brief Editor::setTabWidth
+ * @param tabWidth
+ */
+void Editor::setTabWidth(int tabWidth)
+{
+    this->tabWidth = tabWidth;
+}
+
+/**
+ * @brief Editor::getTabWidth
+ * @return
+ */
+int Editor::getTabWidth()
+{
+    return this->tabWidth;
+}
+
+/**
+ * @brief Editor::setFontSize
+ * @param fontSize
+ */
+void Editor::setFontSize(int fontSize)
+{
+    this->fontSize = fontSize;
+}
+
+/**
+ * @brief Editor::getFontSize
+ * @return
+ */
+int Editor::getFontSize()
+{
+    return this->fontSize;
+}
+
 //![slotUpdateRequest]
 
 //![resizeEvent]
@@ -194,6 +299,37 @@ void Editor::highlightCurrentLine()
     setExtraSelections(extraSelections);
 }
 
+/**
+ * @brief Editor::highlightCurrentLine
+ * @param highlightColor
+ */
+void Editor::highlightCurrentLine(QString highlightColor, int lighten = 160)
+{
+    QList<QTextEdit::ExtraSelection> extraSelections;
+
+    if (!isReadOnly()) {
+        QTextEdit::ExtraSelection selection;
+
+        QColor lineColor = QColor(highlightColor).lighter(lighten);
+
+        selection.format.setBackground(lineColor);
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.clearSelection();
+        extraSelections.append(selection);
+    }
+
+    setExtraSelections(extraSelections);
+}
+
+/**
+ * @brief Editor::highlightCurrentLineWrapper
+ */
+void Editor::highlightCurrentLineWrapper()
+{
+    highlightCurrentLine("gray", 180);
+}
+
 //![cursorPositionChanged]
 
 //![extraAreaPaintEvent_0]
@@ -203,7 +339,7 @@ void Editor::lineNumberAreaPaintEvent(QPaintEvent *event)
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), Qt::lightGray);
 
-//![extraAreaPaintEvent_0]
+//![extraAreaPaintEvent_0]QString highlightColor;
 
 //![extraAreaPaintEvent_1]
     QTextBlock block = firstVisibleBlock();
