@@ -2,9 +2,11 @@
 
 This is a simply IDE for C and C++ development.
 
+
 ## Compile
 
-Necessary to have qmake4 or qmake5
+For compilation you need to have Qt5 and qmake5.
+
 ```bash
 cd /desired/path/
 git clone https://github.com/bartfaimate/ODA-IDE
