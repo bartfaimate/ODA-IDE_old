@@ -1,7 +1,7 @@
 #include <QtWidgets>
 
 #include "Headers/editor.h"
-
+#include "Headers/highlighter.h"
 //![constructor]
 
 Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
@@ -173,6 +173,50 @@ void Editor::updateLineNumberArea(const QRect &rect, int dy)
     if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth(0);
 }
+
+void Editor::openFile(QString fileName)
+{
+    QFile *file = new QFile(fileName);
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
+        QErrorMessage *fileError = new QErrorMessage();
+        fileError->showMessage(tr("ERROR by opening file"));
+    }
+
+    Highlighter *currentHighlighter = new Highlighter(this->document());
+    this->setFileNameAndExtension(fileName);
+    currentHighlighter->setupRule(this->getFileExtension());
+
+    QString info = ">> " + fileName + " opened\n";
+
+    QTextStream *readFile = new QTextStream(file);
+    this->document()->setPlainText(readFile->readAll());
+    file->flush();
+    file->close();
+    emit(this->filenameChanged(fileName));
+}
+
+void Editor::saveFile(QString fileName)
+{
+
+}
+
+void Editor::newFile(QString fileName)
+{
+    QFile *file = new QFile(fileName);
+    if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
+        QErrorMessage *fileError = new QErrorMessage();
+        fileError->showMessage(tr("ERROR by saving"));
+        return;
+    }
+    this->setFileNameAndExtension(fileName);
+    Highlighter *currentHighlighter = new Highlighter(this->document());
+    currentHighlighter->setupRule(this->getFileExtension());
+
+    this->clear();
+    file->close();
+}
+
+
 
 /**
  * @brief Editor::getLightenValue

@@ -409,6 +409,9 @@ void MainWindow::openFile()
 
             /* cast QWidget to Editor */
             Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+            currentEditor->openFile(filename);
+
+#if 0
             Highlighter *currentHighlighter = new Highlighter(currentEditor->document());
             currentEditor->setFileNameAndExtension(filename);
             currentHighlighter->setupRule(currentEditor->getFileExtension());
@@ -424,6 +427,7 @@ void MainWindow::openFile()
             currentEditor->document()->setPlainText(readFile->readAll());
             file->flush();
             file->close();
+#endif
             emit(currentEditor->filenameChanged(filename));
             tab->setTabText(tab->currentIndex(), currentEditor->getShortFileName());
 
@@ -471,22 +475,26 @@ void MainWindow::newFile()
     try{
         if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
             QErrorMessage *fileError = new QErrorMessage();
-            fileError->showMessage(tr("ERROR by saving"));
+            fileError->showMessage(tr("ERROR by creating new file"));
             return;
         }
         Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
-        currentEditor->setFileNameAndExtension(filename);
-        QString info = ">> " + filename + " created\n";
-        console->appendPlainText(info);
+        currentEditor->newFile(filename);
+
+    //    currentEditor->setFileNameAndExtension(filename);
+    //    QString info = ">> " + filename + " created\n";
+    //    console->appendPlainText(info);
         statusBar()->showMessage(currentEditor->getFileExtension());
 
-        currentEditor->clear();
-        file->close();
+   //     currentEditor->clear();
+   //     file->close();
         if(!Editor(tab->currentWidget()).document()->isEmpty()){
             addTab();
             tab->setCurrentIndex(tab->count()-1);
         }
         emit(currentEditor->filenameChanged(filename));
+        tab->setTabText(tab->currentIndex(), currentEditor->getShortFileName());
+
 
 #if DEBUG == 1
         cout << filename.toStdString() << endl;
