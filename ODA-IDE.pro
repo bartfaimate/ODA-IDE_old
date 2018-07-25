@@ -44,7 +44,8 @@ SOURCES += \
     src/mainwindow.cpp \
     src/tab.cpp \
     src/test.cpp \
-    src/settings.cpp
+    src/settings.cpp \
+  #  src/intellisense.cpp
   #  src/test/testeditor.cpp \
 
 HEADERS += \
@@ -54,7 +55,8 @@ HEADERS += \
     Headers/highlighter.h \
     Headers/mainwindow.h \
     Headers/tab.h \
-    Headers/settings.h
+    Headers/settings.h \
+ #   Headers/intellisense.h
     #Headers/testeditor.h \
 
 

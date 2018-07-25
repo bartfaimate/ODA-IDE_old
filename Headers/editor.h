@@ -46,6 +46,9 @@ private slots:
     void updateLineNumberArea(const QRect &, int);
 
 public slots:
+    void openFile(QString fileName);
+    void saveFile(QString fileName);
+    void newFile(QString fileName);
 
 signals:
     void filenameChanged(QString);

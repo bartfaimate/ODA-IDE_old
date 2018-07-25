@@ -87,6 +87,7 @@ private:
     QAction *newWindowAct;
     QAction *newTabAct;
     QAction *newFileAct;
+    QAction *newProjectAct;
     QAction *openFileAct;
     QAction *saveFileAct;
     QAction *saveFileAsAct;
@@ -130,6 +131,7 @@ private:
 public slots:
     void newWindow();
     void newFile();
+    void newProject();
     void saveFile();
     void saveAsFile();
     void openFile();

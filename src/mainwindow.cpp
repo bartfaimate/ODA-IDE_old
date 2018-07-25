@@ -9,6 +9,7 @@
 #include <QGuiApplication>
 
 #include <thread>
+#include <iostream>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ using namespace std;
  */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)//,
-    //window(new Ui::MainWindow)
+  //window(new Ui::MainWindow)
 {
 
     createLayout();     /* crete layout, positions items, splitter */
@@ -113,7 +114,7 @@ void MainWindow::createLayout()
     console = new Console();
     //tab = new QTabWidget();
 
-   //TODO: this is not working yet
+    //TODO: this is not working yet
     fileManager = new FileManager();
     horizontalSplitter->addWidget(fileManager);
     horizontalSplitter->addWidget(verticalSplitter);
@@ -121,14 +122,14 @@ void MainWindow::createLayout()
     verticalSplitter->addWidget(tab);
     verticalSplitter->addWidget(console);   /* console under the tab */
 
-//most jó a file menü gomb, viszont splitter nem
+    //most jó a file menü gomb, viszont splitter nem
     QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
     vBoxLayout->setMargin(5);
     vBoxLayout->addWidget(menuBar);
     vBoxLayout->addWidget(toolBar);
     vBoxLayout->addLayout(hBoxLayout);
     vBoxLayout->addWidget(verticalSplitter);
- //   vBoxLayout->addWidget(tab);
+    //   vBoxLayout->addWidget(tab);
 
     mainWidget->setLayout(vBoxLayout);
     hBoxLayout->addWidget(toolBar);
@@ -158,6 +159,7 @@ void MainWindow::createFileMenu()
     fileMenu = menuBar->addMenu(tr("&File"));
     fileMenu->addAction(newWindowAct);
     fileMenu->addAction(newTabAct);
+    fileMenu->addAction(newProjectAct);
     fileMenu->addAction(newFileAct);
     fileMenu->addAction(openFileAct);
     fileMenu->addAction(saveFileAct);
@@ -275,6 +277,10 @@ void MainWindow::createFileActions()
     newFileAct->setStatusTip(tr("Create new File"));
     connect(newFileAct, SIGNAL(triggered(bool)), this, SLOT(newFile()));
 
+    newProjectAct = new QAction(*newFileIcon, tr("New P&roject"), this);
+    newProjectAct->setStatusTip("Create new cmake Project");
+    connect(newProjectAct, SIGNAL(triggered(bool)), this, SLOT(newProject()));
+
     openFileAct = new QAction(*openIcon, tr("&Open File"), this);
     openFileAct->setShortcut(QKeySequence::Open);
     openFileAct->setStatusTip(tr("Open existing File"));
@@ -302,7 +308,7 @@ void MainWindow::createFileActions()
  */
 void MainWindow::createEditActions()
 {
-   // Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+    // Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
 
     undoAct = new QAction(*undoIcon, tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
@@ -395,6 +401,7 @@ void MainWindow::openFile()
         QFile *file = new QFile(filename);
 
         try{
+            addTab();
             if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
                 QErrorMessage *fileError = new QErrorMessage();
                 fileError->showMessage(tr("ERROR by opening file"));
@@ -500,6 +507,40 @@ void MainWindow::newFile()
     }
 }
 
+void MainWindow::newProject()
+{
+
+    QDir projectFolder = QFileDialog::getExistingDirectory(0, ("Select Output Folder"), QDir::currentPath());
+    cout << projectFolder.absolutePath().toStdString() << endl;
+
+    QFile *cmakeList = new QFile(projectFolder.absolutePath() + tr("/CMakeLists.txt"));
+    if(!cmakeList->exists()) {
+        cmakeList->open(QFile::WriteOnly);
+        QString projectName = projectFolder.dirName();
+
+        cmakeList->write("cmake_minimum_required(VERSION 2.8.12)\n\n");
+        cmakeList->write("project(");
+        cmakeList->write(projectName.toStdString().c_str());
+        cmakeList->write(")\n");
+        cmakeList->write("set(CMAKE_INCLUDE_CURRENT_DIR ON)\n");
+        cmakeList->write("add_executable(");
+        cmakeList->write(projectName.toStdString().c_str());
+        cmakeList->write(" \"main.c\")\n");
+        cmakeList->close();
+    }
+
+    QFile *main_c = new QFile(projectFolder.absolutePath() + tr("/main.c"));
+    if(!main_c->exists()) {
+        main_c->open(QFile::WriteOnly);
+        main_c->write("#include <stdio.h>\n\n");
+        main_c->write("int main(){\n");
+        main_c->write("\tprintf(\"Hello World\\n\");\n");
+        main_c->write("\treturn 0;\n");
+        main_c->write("}");
+        main_c->close();
+    }
+}
+
 /**
  * @brief MainWindow::saveAsFile
  * creates a new file and saves the content of the editor
@@ -572,7 +613,7 @@ void MainWindow::saveFile()
                 fileError->showMessage(tr("ERROR by saving"));
                 return;
             }
-           // while(file->readLine() != EOF)
+            // while(file->readLine() != EOF)
 
             file->write(currentEditor->toPlainText().toStdString().c_str());
             file->flush();
