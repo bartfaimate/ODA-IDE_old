@@ -17,7 +17,7 @@ class Tab : public QTabWidget
 public:
    // Tab(QWidget *parent = 0);
 
-   // ~Tab();
+    ~Tab();
 
 private:
 

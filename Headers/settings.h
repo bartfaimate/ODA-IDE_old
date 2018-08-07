@@ -15,11 +15,14 @@ public:
 
 private:
 
+
+
 public slots:
 
 public:
     void createFontSettings();
     void createBuildSettings();
+    void createLayout();
 signals:
     void fontsizeChnaged(int);
 

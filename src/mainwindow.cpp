@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* window size and position */
     this->setGeometry(x, y+24, width, height); /* window size and position */
-    this->setWindowTitle(tr("ODA-IDE")); /* setup title */
+    this->setWindowTitle(title); /* setup title */
     createStatusbar(20);
 
     /* setup window icon */
@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #if DEBUG == 1
     this->console->appendDebuginfo("Debug mode started");
 #endif
+
 
 }
 
@@ -66,6 +67,14 @@ MainWindow::~MainWindow()
     saveGeometry();
     saveSettings();
 
+    delete console;
+    delete highlighter;
+    delete tab;
+    delete menuBar;
+    delete toolBar;
+    delete hBoxLayout;
+    delete verticalSplitter;
+    delete horizontalSplitter;
     delete this;
 }
 
@@ -121,6 +130,12 @@ void MainWindow::createLayout()
     tab =  new Tab();       /* tab widget to the splitter */
     verticalSplitter->addWidget(tab);
     verticalSplitter->addWidget(console);   /* console under the tab */
+    QList<int> *sizeList = new QList<int>();
+   // sizeList->append(50);
+
+    //sizeList->append(1);
+   // verticalSplitter->setSizes(*sizeList);
+
 
     //most jó a file menü gomb, viszont splitter nem
     QVBoxLayout *vBoxLayout = new QVBoxLayout(); /* vertical layout */
@@ -383,8 +398,25 @@ void MainWindow::loadSettings()
  */
 void MainWindow::openSettingsWindow()
 {
-    Settings *settings = new Settings();
-    settings->show();
+//    Settings *settings = new Settings();
+//    settings->show();
+    settingsDialog = new SettingsDialog();
+    settingsDialog->show();
+    connect(this->settingsDialog, SIGNAL(okClicked()), this, SLOT(updateSettings()));
+}
+
+void MainWindow::updateSettings()
+{
+    int currentIndex = tab->currentIndex(); /* save the current index */
+
+    /* update all tabs font settings */
+    for(int i = 0; i < tab->count(); i++){
+          tab->setCurrentIndex(i);
+          Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+          currentEditor->setFontSettings();
+    }
+    /* set back to the original index */
+    tab->setCurrentIndex(currentIndex);
 }
 
 /**

@@ -14,7 +14,8 @@ Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLineWrapper();
-    setFontSettings("Courier", 12, 4);
+  //  setFontSettings("Courier", 12, 4);
+    setFontSettings();
    // this->setStyleSheet("background-color: gray");
 }
 
@@ -44,11 +45,15 @@ int Editor::lineNumberAreaWidth()
  */
 void Editor::setFontSettings()
 {
+    QSettings settings(QString("configs/settings.ini"), QSettings::IniFormat); /* load settings */
+    /* setup window position and size */
+    QString fontType = settings.value("Editor/font_type").toString();
+    int fontSize = settings.value("Editor/font_size").toInt();
     font = new QFont();
-    font->setFamily("Courier");
+    font->setFamily(fontType);
     font->setStyleHint(QFont::Monospace);
     font->setFixedPitch(true);
-    font->setPointSize(10);
+    font->setPointSize(fontSize);
     this->setFont(*font);
 
     const int tabStop = 4;

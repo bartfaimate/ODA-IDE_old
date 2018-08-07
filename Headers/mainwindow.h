@@ -18,9 +18,14 @@
 #include "tab.h"
 #include "filemanager.h"
 #include "settings.h"
+#include "settingsdialog.h"
 
 namespace Ui {
 class MainWindow;
+class Highlighter;
+class Editor;
+class Tab;
+class SettingsDialog;
 }
 
 class MainWindow : public QMainWindow
@@ -35,6 +40,9 @@ private:
 
     QString companyName = "OI";
     QString appName = "ODA-IDE";
+    QString title = tr("ODA-IDE");
+
+    QString settingsPath = "configs/settings.ini";
 
 
     QList<QString> *openedFiles;
@@ -46,6 +54,7 @@ private:
     Highlighter *highlighter; /* Syntax highlighter */
     FileManager *fileManager;
     Tab *tab;
+    SettingsDialog *settingsDialog;
 
     QHBoxLayout *hBoxLayout;
     QSplitter *verticalSplitter;
@@ -140,6 +149,8 @@ public slots:
     void saveSettings();
     void loadSettings();
     void openSettingsWindow();
+
+    void updateSettings();
 
 };
 

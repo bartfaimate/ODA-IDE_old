@@ -45,6 +45,10 @@ SOURCES += \
     src/tab.cpp \
     src/test.cpp \
     src/settings.cpp \
+    src/settingsdialog.cpp
+
+
+   # src/settingsdialog.cpp\
   #  src/intellisense.cpp
   #  src/test/testeditor.cpp \
 
@@ -56,6 +60,10 @@ HEADERS += \
     Headers/mainwindow.h \
     Headers/tab.h \
     Headers/settings.h \
+    Headers/settingsdialog.h
+
+
+  #  Headers/settingsdialog.h \
  #   Headers/intellisense.h
     #Headers/testeditor.h \
 
@@ -63,5 +71,8 @@ HEADERS += \
 DISTFILES +=
 
 CONFIG += testcase
+
+FORMS += \
+    settingsdialog.ui
 
 

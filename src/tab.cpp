@@ -2,6 +2,11 @@
 
 
 
+Tab::~Tab()
+{
+    delete this;
+}
+
 void Tab::closeTab(int index)
 {
     removeTab(index);
