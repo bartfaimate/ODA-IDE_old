@@ -1,4 +1,5 @@
 #include <QtWidgets>
+#include <string>
 
 #include "Headers/editor.h"
 #include "Headers/highlighter.h"
@@ -11,12 +12,14 @@ Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLineWrapper()));
+    //connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(getLineIndent()));
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLineWrapper();
-  //  setFontSettings("Courier", 12, 4);
+    //  setFontSettings("Courier", 12, 4);
     setFontSettings();
-   // this->setStyleSheet("background-color: gray");
+    // this->setStyleSheet("background-color: gray");
+
 }
 
 //![constructor]
@@ -59,6 +62,7 @@ void Editor::setFontSettings()
     const int tabStop = 4;
     metrics = new QFontMetrics(*font);
     this->setTabStopWidth(tabStop * metrics->width(" "));
+    this->tabWidth = tabStop;
 }
 
 void Editor::setFontSettings(QString fontFamily, int fontSize, int tabWidth = 4)
@@ -72,6 +76,7 @@ void Editor::setFontSettings(QString fontFamily, int fontSize, int tabWidth = 4)
 
     metrics = new QFontMetrics(*font);
     this->setTabStopWidth(tabWidth * metrics->width(" "));
+    this->tabWidth = tabWidth;
 }
 
 
@@ -92,6 +97,7 @@ void Editor::setFontSettings(QString fontFaimily, int tabwidth = 4)
     metrics = new QFontMetrics(*font);
     this->setTabStopWidth(tabStop * metrics->width(" "));
     this->setFont(*font);
+    this->tabWidth = tabwidth;
 }
 
 /**
@@ -325,6 +331,65 @@ void Editor::resizeEvent(QResizeEvent *e)
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
+int Editor::getLineIndent()
+{
+    QString currentLine;
+    int lineIndent = 0;
+    if(!isReadOnly()) {
+        currentLine = this->textCursor().block().text().trimmed();
+        std::string asciCurrentLine = currentLine.toStdString();
+        for(int i = 0; i < asciCurrentLine.length(); i++) {
+            switch(asciCurrentLine[i]) {
+            case ' ':
+                lineIndent++;
+                break;
+            case '\t':
+                lineIndent += this->tabWidth;
+                break;
+            default:
+
+                break;
+            }
+        }
+    }
+    return lineIndent;
+}
+
+/* TODO: ezt meg kell csinálni nagyon nem jó */
+int Editor::getLineIndent(int row)
+{
+    QCursor *cursor = new QCursor();
+    int rowPos = cursor->pos().y();
+    int colPis = cursor->pos().x();
+
+
+    QString currentLine;
+    int lineIndent = 0;
+
+    currentLine = this->textCursor().block().text().trimmed();
+    std::string asciCurrentLine = currentLine.toStdString();
+    for(int i = 0; i < asciCurrentLine.length(); i++) {
+        switch(asciCurrentLine[i]) {
+        case ' ':
+            lineIndent++;
+            break;
+        case '\t':
+            lineIndent += this->tabWidth;
+            break;
+        default:
+
+            break;
+        }
+    }
+
+    return lineIndent;
+}
+
+long Editor::lineCount()
+{
+    return this->document()->lineCount();
+}
+
 //![resizeEvent]
 
 //![cursorPositionChanged]
@@ -388,16 +453,16 @@ void Editor::lineNumberAreaPaintEvent(QPaintEvent *event)
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), Qt::lightGray);
 
-//![extraAreaPaintEvent_0]QString highlightColor;
+    //![extraAreaPaintEvent_0]QString highlightColor;
 
-//![extraAreaPaintEvent_1]
+    //![extraAreaPaintEvent_1]
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int) blockBoundingRect(block).height();
-//![extraAreaPaintEvent_1]
+    //![extraAreaPaintEvent_1]
 
-//![extraAreaPaintEvent_2]
+    //![extraAreaPaintEvent_2]
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);

@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += testlib
+QT       += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -45,7 +46,8 @@ SOURCES += \
     src/tab.cpp \
     src/test.cpp \
     src/settings.cpp \
-    src/settingsdialog.cpp
+    src/settingsdialog.cpp \
+    sqlhandler.cpp
 
 
    # src/settingsdialog.cpp\
@@ -60,7 +62,8 @@ HEADERS += \
     Headers/mainwindow.h \
     Headers/tab.h \
     Headers/settings.h \
-    Headers/settingsdialog.h
+    Headers/settingsdialog.h \
+    sqlhandler.h
 
 
   #  Headers/settingsdialog.h \

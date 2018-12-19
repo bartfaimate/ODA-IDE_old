@@ -6,8 +6,10 @@
 #include <QFileSystemModel>
 #include <QTreeView>
 #include <QFileIconProvider>
+#include <QDebug>
 
-class FileManager : public QWidget
+
+class FileManager : public QTreeView
 {
     Q_OBJECT
 public:
@@ -16,6 +18,10 @@ public:
 signals:
 
 public slots:
+    void printPath(const QModelIndex &index);
+
+private:
+    QFileSystemModel *model;
 };
 
 #endif // FILEMANAGER_H

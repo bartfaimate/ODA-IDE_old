@@ -38,12 +38,16 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
+
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
     void highlightCurrentLine(QString highlightColor, int lighten);
     void highlightCurrentLineWrapper();
     void updateLineNumberArea(const QRect &, int);
+    int getLineIndent();
+    int getLineIndent(int row);
+    long int lineCount();
 
 public slots:
     void openFile(QString fileName);

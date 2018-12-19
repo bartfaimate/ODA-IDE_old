@@ -118,7 +118,7 @@ void Highlighter::CRule(QString keywordColor = "darkblue", QString macroColor = 
     brush.setColor(color);
     functionFormat.setFontItalic(true);
     functionFormat.setForeground(brush);
-    rule.pattern = QRegularExpression("\\b[A-Za-z0-9_]+(?=\\()");
+    rule.pattern = QRegularExpression("\\b[A-Za-z0-9_]+[\\s]*(?=\\()");
     rule.format = functionFormat;
     highlightingRules.append(rule);
 
@@ -386,6 +386,9 @@ void Highlighter::setupRule()
 {
     // CPPRule();
     PythonRule();
+    QString databasePath = "../sytax.db";
+
+    //TODO: sqlite handler kell
 
 }
 

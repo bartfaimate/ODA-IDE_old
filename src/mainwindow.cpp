@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createStatusbar(20);
 
     /* setup window icon */
-    QIcon *windowIcon = new QIcon("./img/icon.png");
+    QIcon *windowIcon = new QIcon("./icons/icon.png");
     this->setWindowIcon(*windowIcon);
 
     this->console->setup();
@@ -114,8 +114,8 @@ void MainWindow::createLayout()
     verticalSplitter->setOrientation(Qt::Vertical);
     horizontalSplitter = new QSplitter(Qt::Horizontal); /* horizontal splitter for the debug console and text editor */
 
-    menuBar = new QMenuBar();
-    toolBar = new QToolBar();
+ //   menuBar = new QMenuBar();
+ //   toolBar = new QToolBar();
 
     menuBar = new QMenuBar(topFiller);  /* menubar to the top */
     toolBar = new QToolBar(topFiller);  /* toolbar to the top, under menubar */
@@ -127,9 +127,14 @@ void MainWindow::createLayout()
     fileManager = new FileManager();
     horizontalSplitter->addWidget(fileManager);
     horizontalSplitter->addWidget(verticalSplitter);
+
+    // set sizepolicy for horizontalsplitter
+    horizontalSplitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     tab =  new Tab();       /* tab widget to the splitter */
     verticalSplitter->addWidget(tab);
     verticalSplitter->addWidget(console);   /* console under the tab */
+
     QList<int> *sizeList = new QList<int>();
    // sizeList->append(50);
 
@@ -143,7 +148,7 @@ void MainWindow::createLayout()
     vBoxLayout->addWidget(menuBar);
     vBoxLayout->addWidget(toolBar);
     vBoxLayout->addLayout(hBoxLayout);
-    vBoxLayout->addWidget(verticalSplitter);
+    vBoxLayout->addWidget(horizontalSplitter);
     //   vBoxLayout->addWidget(tab);
 
     mainWidget->setLayout(vBoxLayout);
@@ -200,6 +205,7 @@ void MainWindow::createEditMenu()
 
 /**
  * @brief MainWindow::createCompileMenu
+ * and compile menu menuitem orders
  */
 void MainWindow::createCompileMenu()
 {
@@ -207,8 +213,10 @@ void MainWindow::createCompileMenu()
     compilerMenu->addAction(compileAct);
     compilerMenu->addAction(buildAct);
     compilerMenu->addAction(makeAct);
+    compilerMenu->addAction(runAct);
     compilerMenu->addSeparator();
     compilerMenu->addAction(buildSettingsAct);
+
 }
 
 /**
@@ -358,9 +366,13 @@ void MainWindow::createCompileActions()
 
     makeAct = new QAction(tr("Make"), this);
 
+    runAct = new QAction(tr("Run"), this);
+
     buildSettingsAct = new QAction(tr("Build Settings"), this);
     buildSettingsAct->setStatusTip(tr("Open settings window"));
     connect(buildSettingsAct, SIGNAL(triggered(bool)), this, SLOT(openSettingsWindow()));
+
+
 }
 
 /**

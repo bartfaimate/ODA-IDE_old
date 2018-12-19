@@ -41,6 +41,7 @@ private:
     QString companyName = "OI";
     QString appName = "ODA-IDE";
     QString title = tr("ODA-IDE");
+    QString iconPath = "./icons/1x/";
 
     QString settingsPath = "configs/settings.ini";
 
@@ -72,17 +73,17 @@ private:
     QPushButton *runButton;
 
     /* icons */
-    QIcon *newTabIcon = new QIcon("./img/gnome-icons/add.svg");
-    QIcon *newFileIcon = new QIcon("./img/gnome-icons/document-new.svg");
-    QIcon *saveIcon = new QIcon("./img/gnome-icons/document-save.png");
-    QIcon *saveAsIcon = new QIcon("./img/gnome-icons/document-save-as.png");
+    QIcon *newTabIcon = new QIcon(iconPath + "baseline_add_black_48dp.png");
+    QIcon *newFileIcon = new QIcon(iconPath + "baseline_insert_drive_file_black_48dp.png");
+    QIcon *saveIcon = new QIcon(iconPath + "baseline_save_black_48dp.png");
+    QIcon *saveAsIcon = new QIcon(iconPath + "baseline_save_alt_black_48dp.png");
     QIcon *openIcon = new QIcon("./img/gnome-icons/document-open.svg");
 
-    QIcon *buildIcon = new QIcon("./img/gnome-icons/build.png");
-    QIcon *runIcon = new QIcon("./img/gnome-icons/run.png");
+    QIcon *buildIcon = new QIcon(iconPath + "baseline_build_black_48dp.png");
+    QIcon *runIcon = new QIcon(iconPath + "baseline_play_arrow_black_48dp.png");
 
-    QIcon *undoIcon = new QIcon("./img/gnome-icons/edit-undo.svg");
-    QIcon *redoIcon = new QIcon("./img/gnome-icons/edit-redo.svg");
+    QIcon *undoIcon = new QIcon(iconPath + "baseline_undo_black_48dp.png");
+    QIcon *redoIcon = new QIcon(iconPath + "baseline_redo_black_48dp.png");
     QIcon *copyIcon = new QIcon("./img/gnome-icons/edit-copy.png");
     QIcon *pasteIcon = new QIcon("./img/gnome-icons/edit-paste.png");
     QIcon *cutIcon = new QIcon("./img/gnome-icons/edit-cut.png");
@@ -113,6 +114,7 @@ private:
     QAction *buildAct;
     QAction *makeAct;
     QAction *buildSettingsAct;
+    QAction *runAct;
     /*help menu*/
     QAction *aboutAct;
     QAction *aboutQtAct;
