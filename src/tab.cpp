@@ -1,7 +1,5 @@
 #include "Headers/tab.h"
 
-
-
 Tab::~Tab()
 {
     delete this;

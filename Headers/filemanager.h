@@ -7,7 +7,7 @@
 #include <QTreeView>
 #include <QFileIconProvider>
 #include <QDebug>
-
+#include <QFileInfo>
 
 class FileManager : public QTreeView
 {
@@ -15,9 +15,15 @@ class FileManager : public QTreeView
 public:
     explicit FileManager(QWidget *parent = nullptr);
 
+    ~FileManager();
+
+    bool fileExist(QString path);
+
 signals:
+    void filePath(QString);
 
 public slots:
+    void pathEmitter(const QModelIndex & index);
     void printPath(const QModelIndex &index);
 
 private:

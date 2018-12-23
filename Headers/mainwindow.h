@@ -146,6 +146,7 @@ public slots:
     void saveFile();
     void saveAsFile();
     void openFile();
+    void openFile(QString path);
     void addTab();
     void saveGeometry();
     void saveSettings();

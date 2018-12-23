@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     int width = settings.value("window/width").toInt();
     int height = settings.value("window/height").toInt();
 
+    /* setup the last session of the splitters */
+    verticalSplitter->restoreState(settings.value("window/verticalsplitter").toByteArray());
+    horizontalSplitter->restoreState(settings.value("window/horizontalsplitter").toByteArray());
+
     /* window size and position */
     this->setGeometry(x, y+24, width, height); /* window size and position */
     this->setWindowTitle(title); /* setup title */
@@ -67,15 +71,74 @@ MainWindow::~MainWindow()
     saveGeometry();
     saveSettings();
 
-    delete console;
-    delete highlighter;
-    delete tab;
-    delete menuBar;
-    delete toolBar;
+    delete console;   /* Console output */
+    delete highlighter; /* Syntax highlighter */
+    delete fileManager;
+    delete settingsDialog;
+
     delete hBoxLayout;
     delete verticalSplitter;
     delete horizontalSplitter;
-    delete this;
+    delete menuBar;
+    delete toolBar;
+
+    /* toolbar buttons */
+    delete newFileButton;
+    delete newTabButton;
+    delete saveButton;
+    delete undoButton;
+    delete newWindowButton;
+    delete compileButton;
+    delete runButton;
+
+    /* icons */
+    delete newTabIcon;
+    delete newFileIcon;
+    delete saveIcon;
+    delete saveAsIcon;
+    delete openIcon;
+
+    delete buildIcon;
+    delete runIcon;
+
+    delete undoIcon;
+    delete redoIcon;
+    delete copyIcon;
+    delete pasteIcon;
+    delete cutIcon;
+
+    /* menus */
+    delete fileMenu;
+    delete editMenu;
+    delete helpMenu;
+    delete compilerMenu;
+    /*file menu*/
+    delete newWindowAct;
+    delete newTabAct;
+    delete newFileAct;
+    delete newProjectAct;
+    delete openFileAct;
+    delete saveFileAct;
+    delete saveFileAsAct;
+    delete printAct;
+    delete exitAct;
+    /*edit menu*/
+    delete undoAct;
+    delete redoAct;
+    delete cutAct;
+    delete copyAct;
+    delete pasteAct;
+    /*compiler menu*/
+    delete compileAct;
+    delete buildAct;
+    delete makeAct;
+    delete buildSettingsAct;
+    delete runAct;
+    /*help menu*/
+    delete aboutAct;
+    delete aboutQtAct;
+
+    delete newWindows;;
 }
 
 /**
@@ -127,6 +190,7 @@ void MainWindow::createLayout()
     fileManager = new FileManager();
     horizontalSplitter->addWidget(fileManager);
     horizontalSplitter->addWidget(verticalSplitter);
+    connect(fileManager, SIGNAL(filePath(QString)), this, SLOT(openFile(QString)));
 
     // set sizepolicy for horizontalsplitter
     horizontalSplitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -490,6 +554,44 @@ void MainWindow::openFile()
     }
 }
 
+void MainWindow::openFile(QString path)
+{
+    if(path.isEmpty()){
+        return;
+    }
+    else{
+        QFile *file = new QFile(path);
+
+        try{
+            addTab();
+            if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
+                QErrorMessage *fileError = new QErrorMessage();
+                fileError->showMessage(tr("ERROR by opening file"));
+            }
+
+            /* cast QWidget to Editor */
+            Editor *currentEditor = dynamic_cast<Editor*>(tab->currentWidget());
+            currentEditor->openFile(path);
+
+            emit(currentEditor->filenameChanged(path));
+            tab->setTabText(tab->currentIndex(), currentEditor->getShortFileName());
+
+        }
+        catch (...){
+            cout << "error opening file" << endl;
+            console->appendDebuginfo("[OPENFILE]: error opening file");
+            try {
+                file->close();
+            }
+            catch(...) {
+                cout << "[OPEN:] file close error" <<endl;
+                console->appendDebuginfo("[OPENFILE]: error closing file");
+            }
+        }
+    }
+
+}
+
 
 /**
  * @brief MainWindow::newWindow
@@ -715,6 +817,9 @@ void MainWindow::saveSettings()
     settings.setValue("window/width", width);
     settings.setValue("window/mode", isFullSize);
     settings.setValue("theme", "default.css");
+
+    settings.setValue("window/horizontalsplitter", horizontalSplitter->saveState());
+    settings.setValue("window/verticalsplitter", verticalSplitter->saveState());
 
     settings.setValue("screen/height", screenHeight);
     settings.setValue("screen/width", screenWidth);

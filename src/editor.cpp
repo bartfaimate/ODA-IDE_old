@@ -4,7 +4,6 @@
 #include "Headers/editor.h"
 #include "Headers/highlighter.h"
 //![constructor]
-
 Editor::Editor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
